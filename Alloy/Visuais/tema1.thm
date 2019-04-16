@@ -1,0 +1,172 @@
+<?xml version="1.0"?>
+<alloy>
+
+<view>
+
+<defaultnode/>
+
+<defaultedge/>
+
+<node>
+   <type name="CriterioJustificacaoComplementaridadeInfo"/>
+   <type name="CriterioJustificacaoDensidadeInfo"/>
+   <type name="CriterioJustificacaoGestionario"/>
+   <type name="CriterioJustificacaoLegal"/>
+   <type name="CriterioJustificacaoUtilidadeAdministrativa"/>
+   <type name="DestinoFinal"/>
+   <type name="ExemploNotaAplicacao"/>
+   <type name="Int"/>
+   <type name="Justificacao"/>
+   <type name="JustificacaoDF"/>
+   <type name="JustificacaoPCA"/>
+   <type name="Legislacao"/>
+   <type name="ListaConsolidada"/>
+   <type name="NotaExclusao"/>
+   <type name="PCA"/>
+   <type name="ReferencialClassificativo"/>
+   <type name="String"/>
+   <type name="TabelaSelecao"/>
+   <type name="boolean/False"/>
+   <type name="boolean/True"/>
+   <type name="seq/Int"/>
+</node>
+
+<node color="Green">
+   <type name="Conservacao"/>
+</node>
+
+<node color="Red">
+   <type name="Eliminacao"/>
+</node>
+
+<node hideunconnected="no">
+   <type name="univ"/>
+</node>
+
+<node shape="Hexagon" color="Blue">
+   <type name="Classe_N1"/>
+   <type name="Classe_N2"/>
+   <type name="Classe_N3"/>
+   <type name="Classe_N4"/>
+</node>
+
+<node shape="Inv Trapezoid">
+   <type name="TipologiaEntidade"/>
+</node>
+
+<node shape="Trapezoid" color="Gray">
+   <type name="CriterioJustificacao"/>
+</node>
+
+<node visible="no">
+   <type name="NotaAplicacao"/>
+   <type name="TermoIndice"/>
+   <type name="boolean/Bool"/>
+</node>
+
+<node visible="no" shape="Circle">
+   <type name="Entidade"/>
+</node>
+
+<edge attribute="no">
+   <relation name="temCriterio"> <type name="Justificacao"/> <type name="CriterioJustificacao"/> </relation>
+   <relation name="temDF"> <type name="Classe_N3"/> <type name="DestinoFinal"/> </relation>
+   <relation name="temDF"> <type name="Classe_N4"/> <type name="DestinoFinal"/> </relation>
+   <relation name="temFilho"> <type name="Classe_N1"/> <type name="Classe_N2"/> </relation>
+   <relation name="temFilho"> <type name="Classe_N2"/> <type name="Classe_N3"/> </relation>
+   <relation name="temFilho"> <type name="Classe_N3"/> <type name="Classe_N4"/> </relation>
+   <relation name="temJustificacao"> <type name="DestinoFinal"/> <type name="Justificacao"/> </relation>
+   <relation name="temJustificacao"> <type name="PCA"/> <type name="Justificacao"/> </relation>
+   <relation name="temLegislacao"> <type name="Classe_N3"/> <type name="Legislacao"/> </relation>
+   <relation name="temLegislacao"> <type name="Classe_N4"/> <type name="Legislacao"/> </relation>
+   <relation name="temPCA"> <type name="Classe_N3"/> <type name="PCA"/> </relation>
+   <relation name="temPCA"> <type name="Classe_N4"/> <type name="PCA"/> </relation>
+</edge>
+
+<edge layout="yes" attribute="no">
+   <relation name="pertenceLC"> <type name="Classe_N1"/> <type name="ListaConsolidada"/> </relation>
+   <relation name="pertenceTS"> <type name="Classe_N1"/> <type name="TabelaSelecao"/> </relation>
+</edge>
+
+<edge visible="no">
+   <relation name="eDonoProcesso"> <type name="Entidade"/> <type name="Classe_N3"/> </relation>
+   <relation name="eDonoProcesso"> <type name="TipologiaEntidade"/> <type name="Classe_N3"/> </relation>
+   <relation name="eSintetizadoPor"> <type name="Classe_N3"/> <type name="Classe_N3"/> </relation>
+   <relation name="eSintetizadoPor"> <type name="Classe_N4"/> <type name="Classe_N4"/> </relation>
+   <relation name="estaAssocClasse"> <type name="TermoIndice"/> <type name="Classe_N3"/> </relation>
+   <relation name="estaAssocClasse"> <type name="TermoIndice"/> <type name="Classe_N4"/> </relation>
+   <relation name="eSuplementoPara"> <type name="Classe_N3"/> <type name="Classe_N3"/> </relation>
+   <relation name="naPertenceClasse"> <type name="NotaAplicacao"/> <type name="Classe_N1"/> </relation>
+   <relation name="naPertenceClasse"> <type name="NotaAplicacao"/> <type name="Classe_N2"/> </relation>
+   <relation name="naPertenceClasse"> <type name="NotaAplicacao"/> <type name="Classe_N3"/> </relation>
+   <relation name="nePertenceClasse"> <type name="NotaExclusao"/> <type name="Classe_N1"/> </relation>
+   <relation name="nePertenceClasse"> <type name="NotaExclusao"/> <type name="Classe_N2"/> </relation>
+   <relation name="nePertenceClasse"> <type name="NotaExclusao"/> <type name="Classe_N3"/> </relation>
+   <relation name="participaEmApreciando"> <type name="Entidade"/> <type name="Classe_N3"/> </relation>
+   <relation name="participaEmApreciando"> <type name="TipologiaEntidade"/> <type name="Classe_N3"/> </relation>
+   <relation name="participaEmAssessorando"> <type name="Entidade"/> <type name="Classe_N3"/> </relation>
+   <relation name="participaEmAssessorando"> <type name="TipologiaEntidade"/> <type name="Classe_N3"/> </relation>
+   <relation name="participaEmComunicando"> <type name="Entidade"/> <type name="Classe_N3"/> </relation>
+   <relation name="participaEmComunicando"> <type name="TipologiaEntidade"/> <type name="Classe_N3"/> </relation>
+   <relation name="participaEmDecidindo"> <type name="Entidade"/> <type name="Classe_N3"/> </relation>
+   <relation name="participaEmDecidindo"> <type name="TipologiaEntidade"/> <type name="Classe_N3"/> </relation>
+   <relation name="participaEmExecutando"> <type name="Entidade"/> <type name="Classe_N3"/> </relation>
+   <relation name="participaEmExecutando"> <type name="TipologiaEntidade"/> <type name="Classe_N3"/> </relation>
+   <relation name="participaEmIniciando"> <type name="Entidade"/> <type name="Classe_N3"/> </relation>
+   <relation name="participaEmIniciando"> <type name="TipologiaEntidade"/> <type name="Classe_N3"/> </relation>
+   <relation name="pertenceTipologiaEnt"> <type name="Entidade"/> <type name="TipologiaEntidade"/> </relation>
+   <relation name="temClasse"> <type name="ReferencialClassificativo"/> <type name="Classe_N1"/> </relation>
+   <relation name="temClasse"> <type name="ReferencialClassificativo"/> <type name="Classe_N2"/> </relation>
+   <relation name="temClasse"> <type name="ReferencialClassificativo"/> <type name="Classe_N3"/> </relation>
+   <relation name="temClasse"> <type name="ReferencialClassificativo"/> <type name="Classe_N4"/> </relation>
+   <relation name="temPai"> <type name="Classe_N2"/> <type name="Classe_N1"/> </relation>
+   <relation name="temPai"> <type name="Classe_N3"/> <type name="Classe_N2"/> </relation>
+   <relation name="temPai"> <type name="Classe_N4"/> <type name="Classe_N3"/> </relation>
+</edge>
+
+<edge visible="no" attribute="yes">
+   <relation name="contemEntidade"> <type name="TipologiaEntidade"/> <type name="Entidade"/> </relation>
+   <relation name="critTemLegAssoc"> <type name="CriterioJustificacao"/> <type name="Legislacao"/> </relation>
+   <relation name="eAntecessorDe"> <type name="Classe_N3"/> <type name="Classe_N3"/> </relation>
+   <relation name="eComplementarDe"> <type name="Classe_N3"/> <type name="Classe_N3"/> </relation>
+   <relation name="eCruzadoCom"> <type name="Classe_N3"/> <type name="Classe_N3"/> </relation>
+   <relation name="eSinteseDe"> <type name="Classe_N3"/> <type name="Classe_N3"/> </relation>
+   <relation name="eSinteseDe"> <type name="Classe_N4"/> <type name="Classe_N4"/> </relation>
+   <relation name="eSucessorDe"> <type name="Classe_N3"/> <type name="Classe_N3"/> </relation>
+   <relation name="eSuplementoDe"> <type name="Classe_N3"/> <type name="Classe_N3"/> </relation>
+   <relation name="pertenceLC"> <type name="Classe_N2"/> <type name="ListaConsolidada"/> </relation>
+   <relation name="pertenceLC"> <type name="Classe_N3"/> <type name="ListaConsolidada"/> </relation>
+   <relation name="pertenceLC"> <type name="Classe_N4"/> <type name="ListaConsolidada"/> </relation>
+   <relation name="pertenceTS"> <type name="Classe_N2"/> <type name="TabelaSelecao"/> </relation>
+   <relation name="pertenceTS"> <type name="Classe_N3"/> <type name="TabelaSelecao"/> </relation>
+   <relation name="pertenceTS"> <type name="Classe_N4"/> <type name="TabelaSelecao"/> </relation>
+   <relation name="processoTransversal"> <type name="Classe_N3"/> <type name="boolean/Bool"/> </relation>
+   <relation name="temDono"> <type name="Classe_N3"/> <type name="Entidade"/> </relation>
+   <relation name="temDono"> <type name="Classe_N3"/> <type name="TipologiaEntidade"/> </relation>
+   <relation name="temEntidadeResponsavel"> <type name="Legislacao"/> <type name="Entidade"/> </relation>
+   <relation name="temNotaAplicacao"> <type name="Classe_N1"/> <type name="NotaAplicacao"/> </relation>
+   <relation name="temNotaAplicacao"> <type name="Classe_N2"/> <type name="NotaAplicacao"/> </relation>
+   <relation name="temNotaAplicacao"> <type name="Classe_N3"/> <type name="NotaAplicacao"/> </relation>
+   <relation name="temParticipanteApreciador"> <type name="Classe_N3"/> <type name="Entidade"/> </relation>
+   <relation name="temParticipanteApreciador"> <type name="Classe_N3"/> <type name="TipologiaEntidade"/> </relation>
+   <relation name="temParticipanteAssessor"> <type name="Classe_N3"/> <type name="Entidade"/> </relation>
+   <relation name="temParticipanteAssessor"> <type name="Classe_N3"/> <type name="TipologiaEntidade"/> </relation>
+   <relation name="temParticipanteComunicador"> <type name="Classe_N3"/> <type name="Entidade"/> </relation>
+   <relation name="temParticipanteComunicador"> <type name="Classe_N3"/> <type name="TipologiaEntidade"/> </relation>
+   <relation name="temParticipanteDecisor"> <type name="Classe_N3"/> <type name="Entidade"/> </relation>
+   <relation name="temParticipanteDecisor"> <type name="Classe_N3"/> <type name="TipologiaEntidade"/> </relation>
+   <relation name="temParticipanteExecutor"> <type name="Classe_N3"/> <type name="Entidade"/> </relation>
+   <relation name="temParticipanteExecutor"> <type name="Classe_N3"/> <type name="TipologiaEntidade"/> </relation>
+   <relation name="temParticipanteIniciador"> <type name="Classe_N3"/> <type name="Entidade"/> </relation>
+   <relation name="temParticipanteIniciador"> <type name="Classe_N3"/> <type name="TipologiaEntidade"/> </relation>
+   <relation name="temTI"> <type name="Classe_N3"/> <type name="TermoIndice"/> </relation>
+   <relation name="temTI"> <type name="Classe_N4"/> <type name="TermoIndice"/> </relation>
+   <relation name="usarClasse"> <type name="NotaExclusao"/> <type name="Classe_N1"/> </relation>
+   <relation name="usarClasse"> <type name="NotaExclusao"/> <type name="Classe_N2"/> </relation>
+   <relation name="usarClasse"> <type name="NotaExclusao"/> <type name="Classe_N3"/> </relation>
+   <relation name="usarClasse"> <type name="NotaExclusao"/> <type name="Classe_N4"/> </relation>
+</edge>
+
+</view>
+
+</alloy>
