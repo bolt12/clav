@@ -449,7 +449,7 @@ pred inv28 {
 	all pca:PCA | pca.temJustificacao in JustificacaoPCA
 }
 
-/* Quando o PN em causa `eSuplementoPara` outro, 
+/* Quando o PN (sem filhos) em causa `eSuplementoPara` outro, 
    deve ser acrescentado um critério de utilidade administrativa na justificação do respetivo PCA
 */
 pred inv29 {
@@ -492,10 +492,108 @@ pred inv32 {
 	}
 }
 
+/* Quando o PN (com filhos) em causa `eSuplementoPara` outro, 
+   deve ser acrescentado um critério de utilidade administrativa na 
+   justificação PCA dos filhos em que os processos relacionados com
+   o critério podem ser distintos. 
+*/
+pred inv33 {
+	all c:Classe_N3 | some c.temFilho and some c.eSuplementoPara => 
+		all c2:c.temFilho {
+			one crit:CriterioJustificacaoUtilidadeAdministrativa {
+				crit in c2.temPCA.temJustificacao.temCriterio
+				crit.critTemProcRel in c.eSuplementoPara
+			}
+		}
+}
+
+/* Todos os processos relacionados (sem filhos) por uma relação de síntese deverão
+   estar relacionados com o critério de densidade informacional da
+   respetiva justificação.
+*/
+pred inv34 {
+	all c:Classe_N3 | no c.temFilho and (some c.eSinteseDe) => one crit:CriterioJustificacaoDensidadeInfo {
+		crit in c.temDF.temJustificacao.temCriterio and crit.critTemProcRel = c.eSinteseDe
+	}
+	all c:Classe_N3 | no c.temFilho and (some c.eSintetizadoPor) => one crit:CriterioJustificacaoDensidadeInfo {
+		crit in c.temDF.temJustificacao.temCriterio and crit.critTemProcRel = c.eSintetizadoPor
+	}
+}
+
+/* Todos os processos relacionados (com filhos) por uma relação de síntese deverão
+   estar relacionados com o critério de densidade informacional da
+   respetiva justificação.
+*/
+pred inv35 {
+	all c:Classe_N3 | some c.temFilho and (some c.eSinteseDe) => 
+		all c2:c.temFilho {
+			one crit:CriterioJustificacaoDensidadeInfo {
+				crit in c2.temDF.temJustificacao.temCriterio and crit.critTemProcRel = c.eSinteseDe
+			}
+		}
+	all c:Classe_N3 | some c.temFilho and (some c.eSintetizadoPor) => 
+		all c2:c.temFilho {
+			one crit:CriterioJustificacaoDensidadeInfo {
+				crit in c2.temDF.temJustificacao.temCriterio and crit.critTemProcRel = c.eSintetizadoPor
+			}
+		}
+}
+
+/*
+	Todos os processos relacionados (sem filhos) pela relação eComplementarDe,
+	devem estar relacionados com o critério de complementaridade
+	informacional da respetiva justificação.
+*/
+pred inv36 {
+	all c:Classe_N3 | no c.temFilho and (some c.eComplementarDe) => one crit: CriterioJustificacaoComplementaridadeInfo {
+		crit in c.temDF.temJustificacao.temCriterio and crit.critTemProcRel = c.eComplementarDe
+	}
+	all c:Classe_N3 | no c.temFilho and (some eComplementarDe.c) => one crit: CriterioJustificacaoComplementaridadeInfo {
+		crit in c.temDF.temJustificacao.temCriterio and crit.critTemProcRel = eComplementarDe.c
+	}
+}
+
+/*
+	Todos os processos relacionados (com filhos) pela relação eComplementarDe,
+	os filhos devem estar relacionados com o critério de complementaridade
+	informacional da respetiva justificação.
+*/
+pred inv37 {
+	all c:Classe_N3 | some c.temFilho and (some c.eComplementarDe) => 
+		all c2:c.temFilho {
+			one crit: CriterioJustificacaoComplementaridadeInfo {
+				crit in c2.temDF.temJustificacao.temCriterio and crit.critTemProcRel = c.eComplementarDe
+			}
+		}
+	all c:Classe_N3 | some c.temFilho and (some eComplementarDe.c) => 
+		all c2:c.temFilho {
+			one crit: CriterioJustificacaoComplementaridadeInfo {
+				crit in c2.temDF.temJustificacao.temCriterio and crit.critTemProcRel = eComplementarDe.c
+			}
+		}
+}
+
+/*
+	Cada justificação tem no máximo 1 Criterio de cada tipo.
+*/
+pred inv38 {
+	all j:Justificacao {
+		lone crit1:CriterioJustificacaoComplementaridadeInfo | crit1 in j.temCriterio
+  		lone crit2:CriterioJustificacaoDensidadeInfo | crit2 in j.temCriterio
+  		lone crit3:CriterioJustificacaoGestionario | crit3 in j.temCriterio
+  		lone crit4:CriterioJustificacaoLegal | crit4 in j.temCriterio
+  		lone crit5:CriterioJustificacaoUtilidadeAdministrativa | crit5 in j.temCriterio
+	}
+}
+
 /* RUN */
 run {
 	 Classe_N1->ListaConsolidada in Classe_N1<:pertenceLC
 	 --some eSuplementoPara
+	 --some (Classe_N3<:eSinteseDe)
+	 --some eComplementarDe
+	 --some eAntecessorDe
+	 --some eCruzadoCom
 	 inv1
 	 inv2
 	 inv3
@@ -527,5 +625,11 @@ run {
 	 inv29
 	 inv30
 	 inv31
-	 inv32
-} for 4 but exactly 1 ListaConsolidada, exactly 1 Classe_N1, exactly 1 Classe_N2, exactly 1 Classe_N3, exactly 2 Classe_N4
+	 --inv32
+	 inv33
+	 inv34
+	 inv35
+	 inv36
+	 inv37
+	 inv38
+} for 6 but exactly 1 ListaConsolidada, exactly 1 Classe_N1, exactly 1 Classe_N2, exactly 2 Classe_N3, exactly 2 Classe_N4
