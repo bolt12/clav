@@ -1,0 +1,153 @@
+% This is samplepaper.tex, a sample chapter demonstrating the
+% LLNCS macro package for Springer Computer Science proceedings;
+% Version 2.20 of 2017/10/04
+%
+\documentclass[runningheads,a4paper]{llncs}
+%
+\usepackage{graphicx}
+% Used for displaying a sample figure. If possible, figure files should
+% be included in EPS format.
+%
+% If you use the hyperref package, please uncomment the following line
+% to display URLs in blue roman font according to Springer's eBook style:
+% \renewcommand\UrlFont{\color{blue}\rmfamily}
+
+%% Useful packages
+\usepackage[font=small,labelfont=bf]{caption} % Required for specifying captions to tables and figures
+
+\graphicspath{ {./Images/} }
+\usepackage[colorlinks=False]{hyperref} % add links inside PDF files
+\usepackage{amsmath}  % Math fonts
+\usepackage{amsfonts} %
+\usepackage{amssymb}  %
+\usepackage{multirow}
+\usepackage{float}
+
+\usepackage[portuges]{babel}
+\usepackage[utf8x]{inputenc}
+
+\begin{document}
+%
+\title{CLAV - ESPECIFICAÇÃO E VERIFICAÇÃO DO MODELO FORMAL}
+%
+%\titlerunning{Abbreviated paper title}
+% If the paper title is too long for the running head, you can set
+% an abbreviated paper title here
+%
+\author{Armando Santos \and
+Gonçalo Duarte}
+
+%
+\authorrunning{A. et al.}
+% First names are abbreviated in the running head.
+% If there are more than two authors, 'et al.' is used.
+%
+\institute{University of Minho, Braga, Portugal}
+%
+\maketitle              % typeset the header of the contribution
+%
+\begin{abstract}
+
+CLAV é uma plataforma que está a ser desenvolvida pelo Departamento de Informática da Universidade do Minho em parceria com a Direção Geral do Livro, Arquivos e Bibliotecas (DGLAB), e tem como objetivo a classificação e avaliação de todos os documentos que circulam pelas instituições públicas portuguesas. Neste momento existe um modelo do problema especificado em OWL (\textit{Ontology Web Language}), mas tem sofrido várias alterações no decorrer do último ano e não existiu tempo para estudar o impacto dessas mesmas alterações nas pré-condições e invariantes do modelo. Neste projeto, inserido na Unidade Curricular de Laboratórios em Engenharia Informática (LEI) do MIEI/UM, pretende-se formalizar o modelo de raíz assim como os seus invariantes e garantir a consistência dos mesmos, sendo capaz de detetar erros que, até agora, não tenham sido identificados.
+
+\keywords{Administração Pública \and Métodos Formais \and Engenharia Informática \and Alloy Analyzer \and OWL.}
+\end{abstract}
+%
+%
+%
+\section{Introdução}
+
+Até agora, em Portugal, não existia nenhum sistema de informação que gerisse a classificação e a avaliação dos documentos gerados no âmbito dos processos que circulam dentro das instituições públicas portuguesas. O CLAV veio mudar isso com a elaboração de um catálogo, que se pretende que venha a ser a referência nacional de todos processos da Administração Pública (AP), tendo sido modelado numa ontologia. Esta ontologia está especificada num modelo formal que representa o conjunto de conceitos referentes aos processos de negócio e aos relacionamentos entre eles. Infelizmente, todos os dados e documentação de apoio estão espalhados, desorganizados e em diferentes formatos, o que os torna extremamente difíceis de manter num domínio tão complexo como o da AP. No entanto, embora já tenham sido feitos esforços para criar um formato neutro, como a Macro-estrutura Funcional (MEF), e vários sistemas de exploração e exportação, devido aos problemas associados com a inserção manual dos dados oriundos das diversas instituições e à complexidade e instabilidade dos invariantes e restrições associadas ao modelo não é possível garantir a coerência das relações entre os processos de negócio. Esta incoerência é extremamente crítica uma vez que a classificação e avaliação dos processos possuí legislações associadas e lida com a remoção ou conservação (digital e física) de documentos governamentais.
+
+Deste modo, no contexto da unidade curricular de Laboratórios em Engenharia Informática do Mestrado Integrado em Engenharia Informática da Universidade do Minho e associado ao perfil de Métodos Formais em Engenharia Informática, apresentamos, neste artigo, a especificação e verificação, de raíz, da ontologia e o estudo da coerência dos invariantes e pré-condições que fazem parte dela. Devido à natureza puramente relacional inerente no domínio do problema em questão, iremos tirar partido de métodos algébricos e relacionais para nos ajudar a raciocinar sobre o problema em mãos e utilizar o Alloy \textit{model checker} para nos auxiliar a encontrar falhas no desenho do modelo.
+
+\section{O Problema}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{metamodel.pdf}
+\caption{Meta-modelo simplificado}
+\label{metamodel}
+\end{figure}
+
+Cada instituição pública portuguesa desempenha uma função específica dentro da AP (p. ex. a prestação de cuidados de saúde), associado a cada função existe um conjunto de várias sub-funções (p. ex. a gestão de utentes e serviços clínicos) e cada sub-função possui uma lista de processos de negócio que, concretamente, se materializam em documentos (p. ex. um processo de negócio pertencente à sub-função de gestão de utentes seria o registo clínico de utentes). A Lista Consolidada possui esta estrutura hierárquica de 4 níveis onde os processos de negócio são passíveis de ser desdobrados para efeitos de avaliação como falaremos mais à frente. Cada classe da LC possui um conjunto de atributos que a descreve e a partir do 3º nível (PNs) começam a surgir relações mais complicadas entre processos no campo chamado contexto de avaliação. Este contexto de avaliação, como também iremos ver mais à frente, tem associado um conjunto de invariantes que influenciarão o campo das decisões de avaliação. Este último campo é responsável por conter a informação sobre o Prazo de Conservação Administrativa (PCA) e Destino Final (DF) de um processo que correspondem, respetivamente, ao prazo que o documento deve ser guardado e qual o seu destino uma vez que este prazo expire.
+
+Embora as entidades principais no domínio do problema sejam as classes da LC, existem várias outras que se relacionam direta ou indiretamente com cada uma das classes e que fornecem uma maior profundidade e complexidade ao modelo como podemos observar na figura \ref{metamodel}.
+
+Observando o meta-modelo simplificado, onde a azul se encontram os 4 nivéis de classe, verificamos que este possui uma complexidade natural mesmo sem lhe impor alguma restrição. Sendo assim, e dado o contexto sério em que o problema está inserido, torna-se claro que deve ser feita alguma coisa no que diz respeito a dar algumas garantias acerca da coerência e consistência da LC.
+
+\subsection{Primeiro \textit{Checkpoint}}
+
+Sendo o CLAV um projeto que já existe há 1 ano e já se encontra com alguns componentes operacionais, decidiu-se pegar em toda a documentação existente sobre o modelo e os seus requisitos e, com a ajuda do Professor José Carlos Ramalho, fazer um apanhado de todas as entidades e relações existentes. Durante esta primeira fase, bastantes das reuniões semanais serviram para apurar pequenos detalhes e dúvidas que iam surgindo.
+
+Uma das razões que motivaram este investimento inicial, apesar de já existir uma ontologia definida pela qual nos podíamos guiar, foi a de existir muita documentação solta e incompleta que nem sempre estava de acordo com a versão mais recente da ontologia. Foi então, elaborado um documento atualizado que documenta os mais recentes requisitos e invariantes e que já se tornou bastante útil no refinamento da ontologia original, nomeadamente na eliminação de entidades e relações obsoletas e no apuramento do domínio e contradomínio de várias relações.
+
+Na Secção \ref{SecModel} iremos falar mais detalhadamente sobre cada entidade e relação do modelo e na Secção \ref{SecAlloy} será abordada a respetiva implementação em Alloy.
+
+\subsection{Segundo \textit{Checkpoint}}
+
+Uma das principais motivações deste projeto é estudar a forma como os mais variados invariantes interagem entre si e se de alguma forma se contradizem. É neste sentido que o Alloy, sendo uma linguagem de modelação de software leve que nos permite especificar o tanto o modelo como as restrições a ele associadas, ajuda a detetar erros ingénuos e súbtis.
+
+Após o investimento inicial em colecionar todo o material relevante e necessário sobre o problema, deu-se início ao ciclo de vida de verificação do problema \cite{ref_article1}. Apesar dos invariantes serem abordados com mais detalhes na secção \ref{SubSecInv} é possível adiantar já que foram identificados 38 restrições no total, sendo que 23 dessas foram acrescentadas no tal processo de verificação.
+
+Podemos concluir que o Alloy teve um impacto positivo na análise das restrições do modelo e na especificação do modelo formal. É importante realçar que a utilização de um \textit{model checker} não descarta a necessidade de prova mas é muito útil para encontrar falhas de \textit{design} como podemos constatar. A ausência de contra-exemplos dá uma grande confiança de que uma prova de correção está ao alcance.
+
+\subsection{Avaliação Final}
+
+\section{Modelo Formal} \label{SecModel}
+
+\subsection{Domínio}
+
+%Introduzir cada uma das signatures e o seu contexto no problema.
+
+\subsection{Relações envolvidas}
+
+%Falar nas relações em geral e em especifico as mais importantes envolvidas na classificação e avaliação de PNs
+
+\subsection{Invariantes} \label{SubSecInv}
+
+%Formalizar o modelo e os seus invariantes
+
+\section{Modelação em ALLOY} \label{SecAlloy}
+
+\subsection{Especificação}
+
+%Fazer a ponte entre o modelo formal e o modelo Alloy
+
+\subsection{Verificação}
+
+%Pendente.
+
+\section{Dificuldades}
+
+%Documentação do projeto do CLAV:
+%    - espalhada
+%    - desorganizada
+%    - desatualizada
+%    Implicações:
+%        - Tivemos que fazer o apanhado de tudo
+
+%Alguns dos invariantes não eram estáveis e sofreram alterações ao longo do projeto assim como alguns pormenores relacionados com o modelo em si.
+
+\section{Conclusão e Trabalho Futuro} \label{SecConclusion}
+
+%
+% ---- Bibliography ----
+%
+% BibTeX users should specify bibliography style 'splncs04'.
+% References will then be sorted and formatted in the correct style.
+%
+% \bibliographystyle{splncs04}
+% \bibliography{mybibliography}
+%
+\begin{thebibliography}{8}
+\bibitem{ref_article1}
+José N. Oliveira and Miguel A. Ferreira, Member, IEEE: Alloy Meets the Algebra of Programming: A Case Study. IEEE TRANSACTIONS ON SOFTWARE ENGINEERING, VOL. 39, NO. 3, MARCH 2013
+
+%\bibitem{ref_lncs1}
+%Author, F., Author, S.: Title of a proceedings paper. In: Editor,
+%F., Editor, S. (eds.) CONFERENCE 2016, LNCS, vol. 9999, pp. 1--13.
+%Springer, Heidelberg (2016). \doi{10.10007/1234567890}
+
+\end{thebibliography}
+\end{document}

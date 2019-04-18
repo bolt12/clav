@@ -632,4 +632,4 @@ run {
 	 inv36
 	 inv37
 	 inv38
-} for 6 but exactly 1 ListaConsolidada, exactly 1 Classe_N1, exactly 1 Classe_N2, exactly 2 Classe_N3, exactly 2 Classe_N4
+} for 4 but exactly 1 ListaConsolidada, exactly 1 Classe_N1, exactly 1 Classe_N2, exactly 1 Classe_N3, exactly 2 Classe_N4
