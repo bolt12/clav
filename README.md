@@ -457,7 +457,7 @@ Como já foi mencionado o Alloy Analyzer permite visualizar instâncias, por ele
 
 O primeiro contacto com o modelo especificado (apenas os seus objetos e relações entre eles) foi a seguinte:
 
-![](./Alloy/Visuais/withoutTheme.pdf)
+![](./Alloy/Visuais/withoutTheme.png)
 
 O modelo irá simplificar à medida que formos especificando os invariantes e configurando o tema de visualização.
 
@@ -465,7 +465,7 @@ O modelo irá simplificar à medida que formos especificando os invariantes e co
 
 Uma primeira tentativa de configuração do tema de visualização, para uma instância que mais se aproxima de um caso real:
 
-![](./Alloy/Visuais/withTheme.pdf)
+![](./Alloy/Visuais/withTheme.png)
 
 ### Problemas
 
