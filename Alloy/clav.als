@@ -52,7 +52,7 @@ abstract sig Classe {
 }
 
 sig Classe_N1 extends Classe {
-	temFilho: one Classe_N2,
+	temFilho: set Classe_N2,
 }
 sig Classe_N2 extends Classe {
 	temPai: one Classe_N1,

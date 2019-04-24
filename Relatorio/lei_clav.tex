@@ -2,8 +2,11 @@
 % LLNCS macro package for Springer Computer Science proceedings;
 % Version 2.20 of 2017/10/04
 %
-\documentclass[runningheads,a4paper]{llncs}
+\documentclass[tikz,runningheads,a4paper]{llncs}
 %
+\usepackage[portuges]{babel}
+\usepackage[utf8x]{inputenc}
+
 \usepackage{graphicx}
 % Used for displaying a sample figure. If possible, figure files should
 % be included in EPS format.
@@ -23,9 +26,7 @@
 \usepackage{multirow}
 \usepackage{float}
 \usepackage{cite}
-
-\usepackage[portuges]{babel}
-\usepackage[utf8x]{inputenc}
+\usepackage{tikz-cd} 
 
 \begin{document}
 %
@@ -71,7 +72,7 @@ Deste modo, no contexto da unidade curricular de Laboratórios em Engenharia Inf
 \label{metamodel}
 \end{figure}
 
-Cada instituição pública portuguesa desempenha uma função específica dentro da AP (p. ex. a prestação de cuidados de saúde), associado a cada função existe um conjunto de várias sub-funções (p. ex. a gestão de utentes e serviços clínicos) e cada sub-função possui uma lista de processos de negócio que, concretamente, se materializam em documentos (p. ex. um processo de negócio pertencente à sub-função de gestão de utentes seria o registo clínico de utentes). A Lista Consolidada possui esta estrutura hierárquica de 4 níveis\cite{clav-mod} onde os processos de negócio são passíveis de ser desdobrados para efeitos de avaliação como falaremos mais à frente. Cada classe da LC possui um conjunto de atributos que a descreve e a partir do 3º nível (PNs) começam a surgir relações mais complicadas entre processos no campo chamado contexto de avaliação. Este contexto de avaliação, como também iremos ver mais à frente, tem associado um conjunto de invariantes que influenciarão o campo das decisões de avaliação. Este último campo é responsável por conter a informação sobre o Prazo de Conservação Administrativa (PCA) e Destino Final (DF) de um processo que correspondem, respetivamente, ao prazo que o documento deve ser guardado e qual o seu destino uma vez que este prazo expire.
+Cada instituição pública portuguesa desempenha uma função específica dentro da AP (p. ex. a prestação de cuidados de saúde), associado a cada função existe um conjunto de várias sub-funções (p. ex. a gestão de utentes e serviços clínicos) e cada sub-função possui uma lista de processos de negócio que, concretamente, se materializam em documentos (p. ex. um processo de negócio pertencente à sub-função de gestão de utentes seria o registo clínico de utentes). A Lista Consolidada (LC) possui esta estrutura hierárquica de 4 níveis\cite{clav-mod} onde os processos de negócio são passíveis de ser desdobrados para efeitos de avaliação. Cada classe da LC possui um conjunto de atributos que a descreve e a partir do 3º nível (PNs) começam a surgir relações mais complicadas entre processos no campo chamado contexto de avaliação. Este contexto de avaliação, como também iremos ver mais à frente, tem associado um conjunto de invariantes que influenciarão o campo das decisões de avaliação. Este último campo é responsável por conter a informação sobre o Prazo de Conservação Administrativa (PCA) e Destino Final (DF) de um processo que correspondem, respetivamente, ao prazo que o documento deve ser guardado e qual o seu destino uma vez que este prazo expire.
 
 Embora as entidades principais no domínio do problema sejam as classes da LC, existem várias outras que se relacionam direta ou indiretamente com cada uma das classes e que fornecem uma maior profundidade e complexidade ao modelo como podemos observar na figura \ref{metamodel}.
 
@@ -81,21 +82,107 @@ Observando o meta-modelo simplificado, onde a azul se encontram os 4 nivéis de 
 
 Sendo o CLAV um projeto que já existe há 1 ano e já se encontra com alguns componentes operacionais, decidiu-se pegar em toda a documentação existente sobre o modelo e os seus requisitos e, com a ajuda do Professor José Carlos Ramalho, fazer um apanhado de todas as entidades e relações existentes. Durante esta primeira fase, bastantes das reuniões semanais serviram para apurar pequenos detalhes e dúvidas que iam surgindo.
 
-Uma das razões que motivaram este investimento inicial, apesar de já existir uma ontologia definida pela qual nos podíamos guiar, foi a de existir muita documentação\cite{clav-new}\cite{clav-mod}\cite{clav-req} solta e incompleta que nem sempre estava de acordo com a versão mais recente da ontologia. Foi então, elaborado um documento atualizado que documenta os mais recentes requisitos e invariantes e que já se tornou bastante útil no refinamento da ontologia original, nomeadamente na eliminação de entidades e relações obsoletas e no apuramento do domínio e contradomínio de várias relações.
+Uma das razões que motivaram este investimento inicial, apesar de já existir uma ontologia definida pela qual nos podíamos guiar, foi a de existir muita documentação\cite{clav-new}\cite{clav-mod}\cite{clav-req} solta e incompleta que nem sempre estava de acordo com a versão mais recente da ontologia. Foi então, elaborado um documento, atualizado, que documenta os mais recentes requisitos e invariantes e que já se tornou bastante útil no refinamento da ontologia original, nomeadamente na eliminação de entidades e relações obsoletas e no apuramento do domínio e contradomínio de várias relações.
 
-Na Secção \ref{SecModel} iremos falar mais detalhadamente sobre cada entidade e relação do modelo e na Secção \ref{SecAlloy} será abordada a respetiva implementação em Alloy.
+Na Secção \ref{SecModel} iremos falar mais detalhadamente sobre cada entidade e relação do modelo e na secção \ref{SecAlloy} será abordada a respetiva implementação em Alloy.
 
 \subsection{Segundo \textit{Checkpoint}}
 
-Uma das principais motivações deste projeto é estudar a forma como os mais variados invariantes interagem entre si e se de alguma forma se contradizem. É neste sentido que o Alloy, sendo uma linguagem de modelação de software leve que nos permite especificar o tanto o modelo como as restrições a ele associadas, ajuda a detetar erros ingénuos e súbtis.
+Uma das principais motivações deste projeto é estudar a forma como os mais variados invariantes interagem entre si e se, de alguma forma, se contradizem. É neste sentido que o Alloy, sendo uma linguagem de modelação de software leve que nos permite especificar tanto o modelo como as restrições a ele associadas, ajuda a detetar erros ingénuos e subtis.
 
-Após o investimento inicial em colecionar todo o material relevante e necessário sobre o problema, deu-se início ao ciclo de vida de verificação do problema \cite{jno}. Apesar dos invariantes serem abordados com mais detalhes na secção \ref{SubSecInv} é possível adiantar já que foram identificados 38 restrições no total, sendo que 23 dessas foram acrescentadas no tal processo de verificação.
+Após o investimento inicial em colecionar todo o material relevante e necessário sobre o problema, deu-se início ao ciclo de vida de verificação do problema \cite{jno}. Apesar dos invariantes serem abordados com mais detalhes na secção \ref{SubSecInv}, é possível adiantar já que foram identificadas 38 restrições no total, sendo que 23 dessas foram acrescentadas no tal processo de verificação.
 
-Podemos concluir que o Alloy teve um impacto positivo na análise das restrições do modelo e na especificação do modelo formal. É importante realçar que a utilização de um \textit{model checker} não descarta a necessidade de prova mas é muito útil para encontrar falhas de \textit{design} como podemos constatar. A ausência de contra-exemplos dá uma grande confiança de que uma prova de correção está ao alcance.
+Podemos então concluir, que o Alloy teve um impacto positivo na análise das restrições do modelo e na especificação do modelo formal. É importante realçar que a utilização de um \textit{model checker} não descarta a necessidade de prova mas é muito útil para encontrar falhas de \textit{design} como pudemos constatar. A ausência de contra-exemplos dá uma grande confiança de que uma prova de correção está ao alcance.
 
 \subsection{Avaliação Final}
 
 \section{Modelo Formal} \label{SecModel}
+
+Nesta secção será abordada a especificação formal do CLAV. Será introduzida alguma notação relativa ao cálculo relacional utilizado na formalização do problema e, posteriormente, tanto as classes presentes no domínio do modelo como as relações entre estas serão enunciadas. Por último, devido à grande quantidade de invariantes existentes, apenas serão apresentados X, que melhor ilustram a dimensão e complexidade do CLAV. % TODO: mudar X para um número concreto.
+
+\subsection{Calcular com relações\cite{jno}\cite{jno-5}}
+
+Dentro do contexto do CLAV podemos encontrar frases do género \textit{"A gestão de utentes é uma subfunção da prestação de cuidados de saúde"}, \textit{"O processo de referenciação de utentes para consultas é cruzado com o processo de registo nacional de utentes"} ou \textit{"Se um processo é complementar de outro, então o seu destino final é de conservação"}. Estas expressões podem ser interpretadas como relações tipadas entre objetos.
+
+As relações, como as frases a cima, já existem na matemática há vários anos e possuem uma notação própria capaz de as exprimir. Em geral, a notação (infixa) \textit{b R a}, onde \textit{a} e \textit{b} são os objetos e \textit{R} a relação, é a que expressa mais naturalmente as relações. Esta notação aplica-se também ao uso da voz passiva, que expressa a relação inversa de \textit{R}, denotada por \textit{Rº}, onde \textit{b R a} significa o mesmo que \textit{a Rº b}. Por exemplo, \textit{é síntese deº = é sintetizado por}.
+
+Também é importante observar que relações do género \textit{R = é o pai de}, são relações em que quando conhecido, o pai (p. ex. de uma classe) é único. Relações com esta propriedade são referidas como \textit{simples} e satisfazem a propriedade
+
+\begin{equation}
+\label{eq-simple}
+R \circ Rº \subseteq id
+\end{equation}
+
+onde ($\circ$), denota a composição de relações, \textit{id} é a relação identidade e $\subseteq$ é a inclusão de relações:
+
+\begin{equation}
+\label{eq-subseteq}
+R \subseteq S \equiv \forall b; a : b R a \Rightarrow b S a.
+\end{equation}
+
+\subsubsection{Relações tipadas e diagramas:}
+
+O uso de setas e diagramas torna possível expressar formulas relacionais mais complexas. No entanto, para ser possível representar e raciocinar sobre estes diagramas é necessário que estes estejam bem construídos.
+
+Observando a relação \eqref{eq-subseteq} concluímos que apenas faz sentido se \textit{R} e \textit{S} forem do mesmo tipo. A notação $B \xleftarrow[]{\text{R}} A$ declara uma relação binária que relaciona \textit{B's} com \textit{A's}. Por exemplo, B = \textit{Classe nível 1} e A = \textit{Classe nível 2} para o caso em que \textit{R = é o pai de}. 
+
+Caminhos em diagramas são construídos a partir do encadeamento de setas, o que corresponde à composição de relações:
+
+\begin{equation}
+\label{eq-composition}
+\begin{tikzcd}
+A \arrow[bend right, leftarrow, swap]{rr}{R\ \circ\ S} \arrow[leftarrow]{r}{R} & B \arrow[leftarrow]{r}{S} & C
+\end{tikzcd}
+\hskip2cm b (R \circ S) a \equiv \exists a: b R a \land a S c
+\end{equation}
+
+Os diagramas também advêm da comparação de caminhos, por exemplo,
+
+\begin{center}
+\begin{tikzcd}[row sep=tiny]
+Classe\_N2 \arrow[swap]{dd}{temFilho12} &           & ListaConsolidada \arrow[swap]{ll}{pertenceLC2} \arrow{dd}{id} \\
+                                      & \subseteq &                                                       \\
+Classe\_N1                      &           & ListaConsolidada \arrow{ll}{pertenceLC1}  
+\end{tikzcd}
+\end{center}
+
+que representa a restrição
+
+\begin{equation}
+\label{eq-inv1}
+    temFilho12 \circ pertenceLC2 \subseteq id \circ pertenceLC1,
+\end{equation}
+
+onde, no domínio do CLAV, as relações simples \textit{pertenceLC1} e \textit{pertenceLC2} mapeiam, respetivamente, cada classe de nível 1 na sua respetiva LC e cada classe de nível 2 na sua respetiva LC, a relação simples, \textit{temFilho12}, relaciona uma classe de nível 1 com os seus filhos (classes de nível 2), a relação \textit{id} é a conhecida relação identidade que relaciona cada objeto consigo próprio.
+
+\subsubsection{Dos diagramas à lógica\cite{jno}\cite{jno-5}:}
+
+O que é que a expressão \eqref{eq-inv1} significa em lógica proposicional?
+
+\begin{equation*}
+    temFilho12 \circ pertenceLC2 \subseteq id \circ pertenceLC1
+\end{equation*}
+$\equiv$ \{ inclusão de relações \eqref{eq-subseteq}; id \}
+\begin{equation*}
+    \forall\ c1, lc : c1\ (temFilho12 \circ pertenceLC2)\ lc \Rightarrow c1\ pertenceLC2\ lc
+\end{equation*}
+$\equiv$ \{ composição (3) \}
+\begin{equation*}
+    \forall\ c1, lc : (\exists\ c2 : c1\ temFilho12\ c2\ \land\ c2\ pertenceLC2\ lc) \Rightarrow c1\ pertenceLC1\ lc
+\end{equation*}
+$\equiv$ \{ \textit{splitting; nesting} \}
+\begin{equation*}
+    \forall\ c1, c2, lc : c2\ pertenceLC2\ lc \land c1\ temFilho12\ c2\ \Rightarrow \ c1\ pertenceLC1\ lc
+\end{equation*}
+
+Literalmente:
+\vskip0.2cm
+\hskip0.5cm\textit{Se uma c2 pertence à lista consolidada lc e c2 é filho da classe c1, então c1 também pertence à lista consolidada lc.}
+
+\vskip0.2cm
+Ainda em menos palavras, a restrição \eqref{eq-inv1}, sugere:
+\vskip0.2cm
+\hskip0.5cm\textit{Filho de quem pertence, também pertence.}
 
 \subsection{Domínio}
 
