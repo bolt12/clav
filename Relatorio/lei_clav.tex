@@ -113,7 +113,7 @@ Também é importante observar que relações do género \textit{R = é o pai de
 R \circ Rº \subseteq id
 \end{equation}
 
-onde ($\circ$), denota a composição de relações, \textit{id} é a relação identidade e $\subseteq$ é a inclusão de relações:
+\noindent onde ($\circ$), denota a composição de relações, \textit{id} é a relação identidade e $\subseteq$ é a inclusão de relações:
 
 \begin{equation}
 \label{eq-subseteq}
@@ -146,14 +146,14 @@ Classe\_N1                      &           & ListaConsolidada \arrow{ll}{perten
 \end{tikzcd}
 \end{center}
 
-que representa a restrição
+\noindent que representa a restrição
 
 \begin{equation}
 \label{eq-inv1}
     temFilho12 \circ pertenceLC2 \subseteq id \circ pertenceLC1,
 \end{equation}
 
-onde, no domínio do CLAV, as relações simples \textit{pertenceLC1} e \textit{pertenceLC2} mapeiam, respetivamente, cada classe de nível 1 na sua respetiva LC e cada classe de nível 2 na sua respetiva LC, a relação simples, \textit{temFilho12}, relaciona uma classe de nível 1 com os seus filhos (classes de nível 2), a relação \textit{id} é a conhecida relação identidade que relaciona cada objeto consigo próprio.
+\noindent onde, no domínio do CLAV, as relações simples \textit{pertenceLC1} e \textit{pertenceLC2} mapeiam, respetivamente, cada classe de nível 1 na sua respetiva LC e cada classe de nível 2 na sua respetiva LC, a relação simples, \textit{temFilho12}, relaciona uma classe de nível 1 com os seus filhos (classes de nível 2), a relação \textit{id} é a conhecida relação identidade que relaciona cada objeto consigo próprio.
 
 \subsubsection{Dos diagramas à lógica\cite{jno}\cite{jno-5}:}
 
@@ -175,14 +175,14 @@ $\equiv$ \{ \textit{splitting; nesting} \}
     \forall\ c1, c2, lc : c2\ pertenceLC2\ lc \land c1\ temFilho12\ c2\ \Rightarrow \ c1\ pertenceLC1\ lc
 \end{equation*}
 
-Literalmente:
+\noindent Literalmente:
 \vskip0.2cm
-\hskip0.5cm\textit{Se uma c2 pertence à lista consolidada lc e c2 é filho da classe c1, então c1 também pertence à lista consolidada lc.}
+\textit{Se uma c2 pertence à lista consolidada lc e c2 é filho da classe c1, então c1 também pertence à lista consolidada lc.}
 
 \vskip0.2cm
-Ainda em menos palavras, a restrição \eqref{eq-inv1}, sugere:
+\noindent Ainda em menos palavras, a restrição \eqref{eq-inv1}, sugere:
 \vskip0.2cm
-\hskip0.5cm\textit{Filho de quem pertence, também pertence.}
+\textit{Filho de quem pertence, também pertence.}
 
 \subsection{Domínio}
 
