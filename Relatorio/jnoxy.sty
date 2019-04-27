@@ -1,0 +1,36 @@
+\typeout{---------------------- Using xy -------------------------------------}
+\usepackage[all]{xy}
+\def\myxym#1{\vcenter{\xymatrix{#1}}}
+\def\bdarrow#1#2#3#4{\xymatrix{#1\ar@<.5ex>[r]^{#2}&#4\ar@<.5ex>[l]^{#3}}}
+%def\longlarrow#1#2#3{\xymatrix@1{ #3 && #1 \ar[ll]_-{#2} }}
+%def\longrarrow#1#2#3{\xymatrix@1{ #1 \ar[rr]^-{#2} && #3 }}
+%def\larrow#1#2#3{\xymatrix@1{ #3 & #1 \ar[l]_-{#2} }}
+%def\rarrow#1#2#3{\xymatrix@1{ #1 \ar[r]^-{#2} & #3 }}
+%def\slarrow#1#2#3{\xymatrix@1{ #3 & #1 \ar@_{->}[l]_-{#2} }}
+%def\srarrow#1#2#3{\xymatrix@1{ #1 \ar@^{->}[r]^-{#2} & #3 }}
+\def\reallyverylonglarrow#1#2#3{\xymatrix{ #3 &&&& #1 \ar[llll]_-{#2} }}
+\def\verylonglarrow#1#2#3{\xymatrix{ #3 &&& #1 \ar[lll]_-{#2} }}
+\def\verylongrarrow#1#2#3{\xymatrix{ #1 \ar[rrrr]^-{#2} &&&& #3}}
+\def\longlarrow#1#2#3{\xymatrix{ #3 && #1 \ar[ll]_-{#2} }}
+\def\longrarrow#1#2#3{\xymatrix{ #1 \ar[rr]^-{#2} && #3 }}
+%def\larrow#1#2#3{\xymatrix{ #3 & #1 \ar[l]_-{#2} }}
+%def\rarrow#1#2#3{\xymatrix{ #1 \ar[r]^-{#2} & #3 }}
+\def\larrow#1#2#3{\def\nolabel{}\def\lab{#2}\ifx\lab\nolabel{#3\from#1}\else\xymatrix{ #3 & #1 \ar[l]_-{#2}}\fi}
+\def\rarrow#1#2#3{\def\nolabel{}\def\lab{#2}\ifx\lab\nolabel{#1\to #3}\else\xymatrix{ #1 \ar[r]^-{#2} & #3 }\fi}
+\def\slarrow#1#2#3{\xymatrix{ #3 & #1 \ar@_{->}[l]_-{#2} }}
+\def\srarrow#1#2#3{\xymatrix{ #1 \ar@^{->}[r]^-{#2} & #3 }}
+
+\def\Falg#1#2#3{\tuple{#1,\larrow{#3{#1}}{#2}{#1}}}
+
+\def\arLaw#1#2#3#4#5{
+\xymatrix{
+        #1      \ar@/^1pc/[rr]^-{#4} &
+        #5 &
+        #2      \ar@/^1pc/[ll]^-{#3}
+}}
+\def\arLeq#1#2#3#4{\arLaw{#1}{#2}{#3}{#4}\leq}
+\def\arIso#1#2#3#4{\arLaw{#1}{#2}{#3}{#4}\iso}
+
+\def\Iso#1#2#3#4{{#1}&\wider\iso&{#2}} % backup where arLeq breaks TeX
+\def\Leq#1#2#3#4{{#1}&\wider\leq&{#2}} % backup where arLeq breaks TeX
+
