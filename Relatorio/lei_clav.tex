@@ -104,7 +104,7 @@ Nesta secção será abordada a especificação formal do CLAV. Será introduzid
 
 Dentro do contexto do CLAV podemos encontrar frases do género \textit{"A gestão de utentes é uma subfunção da prestação de cuidados de saúde"}, \textit{"O processo de referenciação de utentes para consultas é cruzado com o processo de registo nacional de utentes"} ou \textit{"Se um processo é complementar de outro, então o seu destino final é de conservação"}. Estas expressões podem ser interpretadas como relações tipadas entre objetos.
 
-As relações, como as frases a cima, já existem na matemática há vários anos e possuem uma notação própria capaz de as exprimir. Em geral, a notação (infixa) \textit{b R a}, onde \textit{a} e \textit{b} são os objetos e \textit{R} a relação, é a que expressa mais naturalmente as relações. Esta notação aplica-se também ao uso da voz passiva, que expressa a relação inversa de \textit{R}, denotada por \textit{Rº}, onde \textit{b R a} significa o mesmo que \textit{a Rº b}. Por exemplo, \textit{é síntese deº = é sintetizado por}.
+As relações, como as frases a cima, já existem na matemática há vários anos e possuem uma notação própria capaz de as exprimir. Em geral, a notação (infixa) \textit{b R a}, onde \textit{a} e \textit{b} são os objetos e \textit{R} a relação, é a que expressa mais naturalmente as relações. Esta notação aplica-se também ao uso da voz passiva, que expressa a relação inversa de \textit{R}, denotada por \textit{Rº}, onde \textit{b R a} significa o mesmo que \textit{a Rº b}. Por exemplo, \textit{é síntese deº = é sintetizado por}.\label{rel_inv}
 
 Também é importante observar que relações do género \textit{R = é o pai de}, são relações em que quando conhecido, o pai (p. ex. de uma classe) é único. Relações com esta propriedade são referidas como \textit{simples} e satisfazem a propriedade
 
@@ -153,7 +153,7 @@ Classe\_N1                      &           & ListaConsolidada \arrow{ll}{perten
     temFilho12 \circ pertenceLC2 \subseteq id \circ pertenceLC1,
 \end{equation}
 
-\noindent onde, no domínio do CLAV, as relações simples \textit{pertenceLC1} e \textit{pertenceLC2} mapeiam, respetivamente, cada classe de nível 1 na sua respetiva LC e cada classe de nível 2 na sua respetiva LC, a relação simples, \textit{temFilho12}, relaciona uma classe de nível 1 com os seus filhos (classes de nível 2), a relação \textit{id} é a conhecida relação identidade que relaciona cada objeto consigo próprio.
+\noindent onde, no domínio do CLAV, as relações \textit{pertenceLC1} e \textit{pertenceLC2} mapeiam, respetivamente, cada classe de nível 1 na sua respetiva LC e cada classe de nível 2 na sua respetiva LC, a relação simples, \textit{temFilho12}, relaciona uma classe de nível 1 com os seus filhos (classes de nível 2), a relação \textit{id} é a conhecida relação identidade que relaciona cada objeto consigo próprio.
 
 \subsubsection{Dos diagramas à lógica\cite{jno}\cite{jno-5}:}
 
@@ -187,10 +187,76 @@ $\equiv$ \{ \textit{splitting; nesting} \}
 \subsection{Domínio}
 
 %Introduzir cada uma das signatures e o seu contexto no problema.
+Com a especificação do domínio do modelo formal pretendemos descrever a essência do problema em questão que é o de garantir que, dadas as entidades existentes e as suas relações, o conjunto de invariantes impostos são coerentes, não se contradizem e permitem instâncias semanticamente corretas.
+
+Sendo assim, nesta secção e na próxima, apesar do domínio especificado ser maior, apenas iremos apresentar as especificações que melhor capturam a essência do modelo por questões de síntese. No entanto, será possível consultar o modelo na totalidade em anexo.
+
+\subsubsection{Referencial Classificativo:}
+
+O Referencial Classificativo possui o conjunto de Listas Consolidadas e Tabelas de Seleção onde se encontram as diversas funções (classes de nível 1).
+
+\begin{equation*}
+    ReferencialClassificativo = ListaConsolidada + TabelaSelecao
+\end{equation*}
+
+\subsubsection{Classes:}
+
+Como já foi referido existem 4 níveis de classes e, como veremos na secção abaixo dá-nos jeito especifica-las da seguinte maneira.
+
+\begin{equation*}
+    Classes = Classe\_N1 + Classe\_N2 + Classe\_N3 + Classe\_N4
+\end{equation*}
+
+\subsubsection{PCA:}
+
+O Prazo de Conservação Administrativa é o simples tipo de dados:
+
+\begin{equation*}
+    PCA
+\end{equation*}
+
+\subsubsection{Destino Final:}
+
+O Destino Final é passível de ser avaliado em um de três valores: \textit{Não Especificado (NE)}, \textit{Eliminação} (quando o processo de negócio tem o destino de ser eliminado) e \textit{Conservação} (quando o processo de negócio deve ser preservado). Apesar de apenas existirem estes 3 valores, foi necessário distingui-los em entidades individuais devido ao facto de cada instância de um DF estar relacionada com outras entidades. Sendo assim:
+
+\begin{equation*}
+    DestinoFinal = NE + Eliminacao + Conservacao
+\end{equation*}
 
 \subsection{Relações envolvidas}
 
-%Falar nas relações em geral e em especifico as mais importantes envolvidas na classificação e avaliação de PNs
+Observando apenas as entidades definidas na secção anterior não é bem clara a existência de uma hierarquia nem é clara a existência do contexto de avaliação nas classes de nível 3. Isto deve-se ao facto de estas características apenas se evidenciarem ao analisar as relações envolvidas entre cada uma das entidades do domínio.
+
+É de realçar que foi feito um esforço em manter as nomenclaturas da ontologia original e devido a isso, muitas das relações inversas possuem nomes diferentes. No entanto, para efeitos de simplificação e leitura utilizaremos a notação apresentada em \ref{rel_inv} e as restrições de domínio/contradomínio serão esclarecidas no nome das relações.
+
+\subsubsection{Visão hierárquica:}
+
+\begin{equation}
+\label{vis_geral}
+\begin{tikzcd}
+ListaConsolidada \arrow{d}{pertenceLC1} \arrow[swap,bend right=67]{dd}{pertenceLC2} \arrow[swap,bend right=60]{ddd}{pertenceLC3} \arrow[swap,bend right=49]{dddd}{pertenceLC4} \\
+Classe\_N1 \arrow{d}{temFilho12º}                                                                                                                                     \\
+Classe\_N2 \arrow{d}{temFilho23º}                                                                                                                                     \\
+Classe\_N3 \arrow{d}{temFilho34º}                                                                                                                                     \\
+Classe\_N4                                                                                                                                                             
+\end{tikzcd}
+\end{equation}
+
+A cima, nas relações da familia \textit{pertenceLC} o número associado a elas diz respeito ao nível da classe. Nas relações da família \textit{temFilho}\footnote{Na ontologia, a relação inversa é a \textit{temPai}}, o primeiro número diz respeito ao pai e o segundo ao filho. Sendo assim, com estas relações já é possível observar a cascata hierárquica das classes de processos da Administração Pública associadas a uma Lista Consolidada.
+
+Com esta representação gráfica podemos também concluir que o sentido do invariante \ref{eq-inv1} também se aplica às relações apresentadas, dando origem a mais dois diagramas semelhantes mas para as classes filho.
+
+\subsubsection{Processos de negócio:}
+
+\begin{equation}
+\label{vis_pn}
+\begin{tikzcd}
+            &  & Classe\_N3 \arrow[loop,swap]{u}{\textit{\shortstack{eAntecessorDe \\ eComplementarDe \\ eCruzadoCom \\ eSinsteseDe \\ eSucessorDe \\ eSuplementoDe}}}                       &  &                                       \\
+PCA \arrow{rru}{temPCA3} \arrow[swap, bend right]{rrrr}{temPCA4} &  & DestinoFinal \arrow[swap]{u}{temDF3} \arrow{rr}{temDF4} &  & Classe\_N4 \arrow[swap]{llu}{temFilho34}
+\end{tikzcd}
+\end{equation}
+
+As endo-relações que dizem respeito aos processos de negócio na figura a cima são as principais relações presentes no contexto de avaliação e que irão influenciar o resultado do Destino Final. As classes de nível 4 são casos particulares em que um PN se desdobra com um certo motivo. Nesses casos as decisões de avaliação passam para os filhos. Como podemos ver, é nos processos de negócio que se encontra uma maior densidade de relações e é também nestes que se encontra a parte mais complexa e crítica do problema e, devido a isto, a maior parte dos invariantes irá focar-se neste diagrama. É de salientar que esta figura omite entidades e relações também relevantes que lidam com legislação e critérios de justificação que poderão ser encontrados no modelo final em anexo.
 
 \subsection{Invariantes} \label{SubSecInv}
 
