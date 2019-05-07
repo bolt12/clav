@@ -86,7 +86,7 @@ Uma das razões que motivaram este investimento inicial, apesar de já existir u
 
 Na Secção \ref{SecModel} iremos falar mais detalhadamente sobre cada entidade e relação do modelo e na secção \ref{SecAlloy} será abordada a respetiva implementação em Alloy.
 
-\subsection{Segundo \textit{Checkpoint}}
+\subsection{Segundo \textit{Checkpoint}} \label{Sec2CheckP}
 
 Uma das principais motivações deste projeto é estudar a forma como os mais variados invariantes interagem entre si e se, de alguma forma, se contradizem. É neste sentido que o Alloy, sendo uma linguagem de modelação de software leve que nos permite especificar tanto o modelo como as restrições a ele associadas, ajuda a detetar erros ingénuos e subtis.
 
@@ -260,7 +260,11 @@ As endo-relações que dizem respeito aos processos de negócio na figura a cima
 
 \subsection{Invariantes} \label{SubSecInv}
 
-%Formalizar o modelo e os seus invariantes
+Como já foi dado a perceber, neste projeto, apenas foi focado o domínio de relações entre cada entidade pertencente à Lista Consolidada e, dentro deste domínio reduzido, apenas foi explorado com mais profundidade a parte de classificação e avaliação de processos de negócio ignorando assim, muitas das relações de atributos e invariantes associados a estas. Como foi referido em \ref{Sec2CheckP}, foram especificados, no total, 38 invariantes sendo que, 23 desses foram adicionados como resultado deste projeto.
+
+Tentando perceber o motivo por de trás de terem sido acrescentados tantos invariantes chegamos à conclusão de que, a maior parte deles incide em invariantes que dizem respeito à taxonomia das relações, onde a injetividade é a mais comum, e os restantes provêm do trabalho realizado neste projeto onde, em conjunto com o Professor José C. Ramalho, foram discutidos e validados e dizem respeito à parte semântica/funcional do CLAV.
+
+% Falar/Enumerar/Explicar alguns invariantes
 
 \section{Modelação em ALLOY} \label{SecAlloy}
 
