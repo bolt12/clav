@@ -264,6 +264,28 @@ Como já foi dado a perceber, neste projeto, apenas foi focado o domínio de rel
 
 Tentando perceber o motivo por de trás de terem sido acrescentados tantos invariantes chegamos à conclusão de que, a maior parte deles incide em invariantes que dizem respeito à taxonomia das relações, onde a injetividade é a mais comum, e os restantes provêm do trabalho realizado neste projeto onde, em conjunto com o Professor José C. Ramalho, foram discutidos e validados e dizem respeito à parte semântica/funcional do CLAV.
 
+\subsubsection{Injetividade:}
+
+A injetividade garante que não existem duas instâncias da mesma entidade a relacionarem-se com uma outra entidade. Este invariante está presente em quase todas as relações uma vez que cada instância, principalmente ao nível dos PNs, está relacionada com legislação e critérios de justificação específicos e não faz sentido serem partilhados.
+
+Generalizadamente, uma relação é injetiva quando:
+
+\begin{equation}
+\label{injetivity}
+    ker\ R \subseteq id
+\end{equation}
+
+Concretamente e intuitivamente, à luz de \ref{vis_geral} e \ref{vis_pn}, uma classe não pode ter 2 pais diferentes (\ref{inv-inj-filho}) nem dois PNs (incluindo classes de nível 4) podem ter a mesma instância de DF (\ref{inv-inj-df}):
+
+\begin{equation}
+    \label{inv-inj-filho}
+    ker\ temFilhoº \subseteq id
+\end{equation}
+\begin{equation}
+    \label{inv-inj-df}
+    ker\ temDF \subseteq id
+\end{equation}
+
 % Falar/Enumerar/Explicar alguns invariantes
 
 \section{Modelação em ALLOY} \label{SecAlloy}
