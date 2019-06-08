@@ -138,8 +138,8 @@ sig Legislacao {
 abstract sig ReferencialClassificativo {
 	temClasse: set Classe
 }
-  sig ListaConsolidada extends ReferencialClassificativo {}
-  sig TabelaSelecao extends ReferencialClassificativo {}
+sig ListaConsolidada extends ReferencialClassificativo {}
+sig TabelaSelecao extends ReferencialClassificativo {}
 /* ----- */
 
 sig TermoIndice {
@@ -242,7 +242,7 @@ pred inv4 {
 
 /* Nas classes 3 com desdobramento */
 
-/* Os 4ºs niveis herdam as legislações existentes no 3º nivel (subconjunto), quer para o PCA quer parao DF. */
+/* Os 4ºs niveis herdam as legislações existentes no 3º nivel (subconjunto), quer para o PCA quer para o DF. */
 pred inv5 {
 	all c:Classe_N3 | some c.temFilho => {
 	(c.temFilho.temPCA.temJustificacao.temCriterio.critTemLegAssoc 
@@ -252,7 +252,8 @@ pred inv5 {
 
 /* Apenas se desdobram devido a um PCA distinto ou DF distinto */
 pred inv6 {
-	all c:Classe_N3 | #c.temFilho > 1 => (#c.temFilho.temDF > 1) or (#c.temFilho.temPCA > 1)
+	all c:Classe_N3 | #c.temFilho > 1 => (#c.temFilho.temDF > 1) or 
+					 (#c.temFilho.temPCA > 1 and (all p1,p2:c.temFilho.temPCA | p1.valor != p2.valor))
 }
 
 /* Caso o motivo de desdobramento seja PCA distinto:
@@ -486,9 +487,15 @@ Se um PN é (por ordem de prioridade):
 pred inv32 {
 	all c:Classe_N3 | no c.temFilho => {
 		some c.eComplementarDe => c.temDF in Conservacao
+	}
+	all c:Classe_N3 | no c.temFilho => {
 		!(some c.eComplementarDe) and (some c.eSinteseDe) => c.temDF in Conservacao
-		!((!some c.eComplementarDe) and (some c.eSinteseDe)) and (some c.eSintetizadoPor) => c.temDF in Eliminacao
-		!(!((!some c.eComplementarDe) and (some c.eSinteseDe)) and (some c.eSintetizadoPor)) => c.temDF in NE
+	}
+	all c:Classe_N3 | no c.temFilho => {
+		!(some c.eComplementarDe) and !(some c.eSinteseDe) and (some c.eSintetizadoPor) => c.temDF in Eliminacao
+	}
+	all c:Classe_N3 | no c.temFilho => {
+		!(some c.eComplementarDe) and !(some c.eSinteseDe) and !(some c.eSintetizadoPor) => c.temDF in NE
 	}
 }
 
@@ -590,7 +597,8 @@ pred inv38 {
 run {
 	 Classe_N1->ListaConsolidada in Classe_N1<:pertenceLC
 	 --some eSuplementoPara
-	 --some (Classe_N3<:eSinteseDe)
+	 --none (Classe_N3<:eSinteseDe)
+	 --some (Classe_N3<:eSintetizadoPor)
 	 --some eComplementarDe
 	 --some eAntecessorDe
 	 --some eCruzadoCom
@@ -625,11 +633,11 @@ run {
 	 inv29
 	 inv30
 	 inv31
-	 --inv32
+	 inv32
 	 inv33
 	 inv34
 	 inv35
 	 inv36
 	 inv37
 	 inv38
-} for 4 but exactly 1 ListaConsolidada, exactly 1 Classe_N1, exactly 1 Classe_N2, exactly 1 Classe_N3, exactly 2 Classe_N4
+} for 5 but exactly 1 ListaConsolidada, exactly 1 Classe_N1, exactly 1 Classe_N2, exactly 2 Classe_N3, exactly 0 Classe_N4

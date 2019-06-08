@@ -98,7 +98,7 @@ Podemos então concluir, que o Alloy teve um impacto positivo na análise das re
 
 \section{Modelo Formal} \label{SecModel}
 
-Nesta secção será abordada a especificação formal do CLAV. Será introduzida alguma notação relativa ao cálculo relacional utilizado na formalização do problema e, posteriormente, tanto as classes presentes no domínio do modelo como as relações entre estas serão enunciadas. Por último, devido à grande quantidade de invariantes existentes, apenas serão apresentados X, que melhor ilustram a dimensão e complexidade do CLAV. % TODO: mudar X para um número concreto.
+Nesta secção será abordada a especificação formal do CLAV. Será introduzida alguma notação relativa ao cálculo relacional utilizado na formalização do problema e, posteriormente, tanto as classes presentes no domínio do modelo como as relações entre estas serão enunciadas. Por último, devido à grande quantidade de invariantes existentes, apenas serão apresentados 6, que melhor ilustram a dimensão e complexidade do CLAV. A formalização apresentada nesta secção, assim como a especificação dos invariantes em notação relacional teve o contributo e ajuda do professor José Nuno Oliveira.
 
 \subsection{Calcular com relações\cite{jno}\cite{jno-5}}
 
@@ -133,7 +133,7 @@ Caminhos em diagramas são construídos a partir do encadeamento de setas, o que
 \begin{tikzcd}
 A \arrow[bend right, leftarrow, swap]{rr}{R\ \circ\ S} \arrow[leftarrow]{r}{R} & B \arrow[leftarrow]{r}{S} & C
 \end{tikzcd}
-\hskip2cm b (R \circ S) a \equiv \exists a: b R a \land a S c
+\hskip2cm b (R \circ S) c \equiv \exists a: b R a \land a S c
 \end{equation}
 
 Os diagramas também advêm da comparação de caminhos, por exemplo,
@@ -189,7 +189,7 @@ $\equiv$ \{ \textit{splitting; nesting} \}
 %Introduzir cada uma das signatures e o seu contexto no problema.
 Com a especificação do domínio do modelo formal pretendemos descrever a essência do problema em questão que é o de garantir que, dadas as entidades existentes e as suas relações, o conjunto de invariantes impostos são coerentes, não se contradizem e permitem instâncias semanticamente corretas.
 
-Sendo assim, nesta secção e na próxima, apesar do domínio especificado ser maior, apenas iremos apresentar as especificações que melhor capturam a essência do modelo por questões de síntese. No entanto, será possível consultar o modelo na totalidade em anexo.
+Sendo assim, nesta secção e na próxima, apesar do domínio especificado ser maior, apenas iremos apresentar as especificações que melhor capturam a essência do modelo, por questões de síntese. No entanto, será possível consultar o modelo na totalidade em anexo.
 
 \subsubsection{Referencial Classificativo:}
 
@@ -201,7 +201,7 @@ O Referencial Classificativo possui o conjunto de Listas Consolidadas e Tabelas 
 
 \subsubsection{Classes:}
 
-Como já foi referido existem 4 níveis de classes e, como veremos na secção abaixo dá-nos jeito especifica-las da seguinte maneira.
+Como já foi referido existem 4 níveis de classes e, como veremos na secção abaixo dá-nos jeito especificá-las da seguinte maneira.
 
 \begin{equation*}
     Classes = Classe\_N1 + Classe\_N2 + Classe\_N3 + Classe\_N4
@@ -286,17 +286,115 @@ Concretamente e intuitivamente, à luz de \ref{vis_geral} e \ref{vis_pn}, uma cl
     ker\ temDF \subseteq id
 \end{equation}
 
+As restrições mais complexas envolvem são as que envolvem as endo-relações dos PNs e as que envolvem desdobramento ao 4º nível. Contextualizando, apesar de não ser frequente, um processo de negócio (nível 3) é passível de ser desdobrado em dois ou mais processos filho (nível 4) sendo que, podem existir dois motivos de desdobramento: DF distinto ou PCA distinto. As classes filho resultantes de tais desdobramentos possuem critérios de avaliação e classificação específicos que devem ser respeitados. Em baixo seguem-se 6 invariantes que caracterizam algumas das restrições impostas:
+
+\begin{itemize}
+    \item Se uma classe de nível 3 tem filhos, então não possui DF nem PCA (o oposto caso não tenha filhos):
+    
+    \begin{equation}
+    \label{inv-3-4}
+        \begin{tikzcd}
+                                                                                                                            &  &            & DF \arrow{ld}{\perp} \arrow[bend left]{dd}{R} \\
+Classe\_N4 \arrow{rr}{temFilho34} \arrow{rrru}{temFilho34\backslash \perp} \arrow[swap]{rrrd}{temFilho34\backslash \perp} &  & Classe\_N3 &                                                                                                           \\
+                                                                                                                            &  &            & PCA \arrow[swap]{lu}{\perp}                                                                                 
+\end{tikzcd}
+    \end{equation}{}
+
+    \begin{equation*}
+        R = (temFilho34\backslash \perp)/ (temFilho34\backslash \perp)
+    \end{equation*}{}
+    
+    \item Só existe desdobramento caso o PCA ou DF dos filhos sejam distintos:
+    
+    \item Caso o motivo de desdobramento seja PCA distinto e caso o DF seja distinto tem que haver uma relação de síntese entre as classes de nível 4 filhas:
+    
+    \item Caso o motivo de desdobramento seja DF distinto então, tem que haver uma relação de síntese entre as classes de nível 4 filhas e o valor do PCA tem que ser igual:
+    
+    \item Um PN só pode ter uma (endo) relação com outro PN:
+    
+    \begin{equation}
+    \begin{split}{}
+        eAntecessorDe \subseteq\ & \neg (eComplementarDe \cap eCruzadoCom \\
+                                & \cap eSinteseDe \cap eSintetizadoPor \\
+                                & \cap eSucessorDe \cap eSuplementoDe \\
+                                & \cap eSuplementoPara)
+    \end{split}{}
+    \end{equation}{}
+    
+    \item Se um PN é complementar ou sintese de outro, então o seu DF é de conservação; se é sintetizado por outro, então o seu DF é de eliminação; caso não seja nenhum dos especificados, o seu DF é NE (não especificado).
+    
+    Dividindo em várias cláusulas obtemos e assumindo que o PN não tem filhos:
+    
+    \begin{equation}
+        eComplementarDe \backslash (temDF \circ \underline{Conservacao})
+    \end{equation}{}
+    \begin{equation}
+        (\neg eComplementarDe \cap eSinteseDe) \backslash (temDF \circ \underline{Conservacao})
+    \end{equation}{}
+    \begin{equation}
+    \begin{split}
+        & (\neg eComplementarDe \cap \neg eSinteseDe \cap eSintetizadoPor) \\
+        & \backslash (temDF \circ \underline{Eliminacao})
+    \end{split}{}
+    \end{equation}{}
+    \begin{equation}
+    \begin{split}
+        & (\neg eComplementarDe \cap \neg eSinteseDe \cap \neg eSintetizadoPor) \\
+        & \backslash (temDF \circ \underline{NE})
+    \end{split}{}
+    \end{equation}{}
+\end{itemize}{}
 % Falar/Enumerar/Explicar alguns invariantes
 
 \section{Modelação em ALLOY} \label{SecAlloy}
 
+A partir do momento em que a formalização está completa resta-nos verificar se, dados os invariantes e a sua conjunção, existem instâncias capazes de habitarem o modelo. Uma solução seria, aleatoriamente e manualmente, popular os conjuntos de cada entidade e de forma \textit{ad hoc} e dispendiosa, verificar se aquele conjunto poderia habitar o modelo. Outra solução bastante mais eficaz será a de recorrar a um \textit{model checker} que, de forma automática, faz essa geração e verificação por nós. As ferramentas de \textit{model checking} tornam o ciclo de vida de verificação muito mais produtivo.
+
+É aqui que o Alloy Analyzer tem impacto e ajuda a perceber que tipo de refinamento deve ser dado ao modelo formalizado e de que maneira é que os invariantes têm impacto nas instâncias possíveis. Nesta secção será abordada a maneira como foi feita a tradução do modelo formal, assim como os seus invariantes para Alloy.
+
 \subsection{Especificação}
 
+Começando pelo domínio do modelo, a cada entidade corresponderá uma \textit{sig} em Alloy. A noção de herança, capturada pelas Classes, Referencial Classificativo e Destino Final é traduzida pelas primitivas \textit{abstract} e \textit{extends}, insipiradas pela programação orientada a objetos. Sendo Assim:
+
+\begin{verbatim}
+abstract sig ReferencialClassificativo {}
+sig ListaConsolidada extends ReferencialClassificativo {}
+sig TabelaSelecao extends ReferencialClassificativo {}
+
+/* ---- */
+
+abstract sig Classe {}
+
+sig Classe_N1 extends Classe {}
+sig Classe_N2 extends Classe {}
+sig Classe_N3 extends Classe {}
+sig Classe_N4 extends Classe {}
+
+
+/* ---- */
+
+abstract sig DestinoFinal {
+	temJustificacao: one Justificacao
+}
+sig Eliminacao, Conservacao, NE extends DestinoFinal {}
+\end{verbatim}{}
+
+No que diz respeito às relações envolvidas, o Alloy permite especificar as relações entre cada entidade da seguinte forma:
+
+\begin{verbatim}
+sig Classe_N1 extends Classe {
+	temFilho: set Classe_N2,
+}
+\end{verbatim}{}
+
+Como podemos ver, está definida uma relação $temFilho :: Classe\_N1 \rightarrow Classe\_N2$ com uma cardinalidade \textit{set} no contradomínio, ou seja, $temFilho$ é uma relação de 0 para muitos. Mais concretamente, a relação especificada é a relação $temFilho12$ como podemos concluir olhando para o domínio e contradomínio. Uma última nota em relação à forma como foi traduzido o modelo, é a de que apesar de ser mais intuitivo na notação relacional representar uma relação como $y R x$, onde $Y \xleftarrow[]{\text{R}} X$, em Alloy é mais intuitivo modelar da forma $x R y$. Mesmo a composição relacional é feita da esquerda para a direita, ao contrário da notação relacional.
 %Fazer a ponte entre o modelo formal e o modelo Alloy
 
 \subsection{Verificação}
 
 %Pendente.
+
+\section{Geração de \textit{queries} SPARQL}
 
 \section{Dificuldades}
 
