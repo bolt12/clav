@@ -408,7 +408,7 @@ A numeração dos invariantes corresponde à numeração do Alloy.
 
 Só se aplica ao 3º nivel.
 
-- <a name="inv32">**(inv32)**</a> Se um PN é (por ordem de prioridade): (**NOT CHECK**)
+- <a name="inv32">**(inv32)**</a> Se um PN é (por ordem de prioridade): (**CHECK**)
     - eComplementarDe   -> DF é de conservaçao
     - eSinteseDe        -> DF é de conservação
     - eSintetizadoPor   -> DF é de eliminação
