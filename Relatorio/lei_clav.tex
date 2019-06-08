@@ -288,7 +288,7 @@ Concretamente e intuitivamente, à luz de \ref{vis_geral} e \ref{vis_pn}, uma cl
 
 As restrições mais complexas envolvem são as que envolvem as endo-relações dos PNs e as que envolvem desdobramento ao 4º nível. Contextualizando, apesar de não ser frequente, um processo de negócio (nível 3) é passível de ser desdobrado em dois ou mais processos filho (nível 4) sendo que, podem existir dois motivos de desdobramento: DF distinto ou PCA distinto. As classes filho resultantes de tais desdobramentos possuem critérios de avaliação e classificação específicos que devem ser respeitados. Em baixo seguem-se 6 invariantes que caracterizam algumas das restrições impostas:
 
-\begin{itemize}
+\begin{enumerate}
     \item Se uma classe de nível 3 tem filhos, então não possui DF nem PCA (o oposto caso não tenha filhos):
     
     \begin{equation}
@@ -321,6 +321,8 @@ Classe\_N4 \arrow{rr}{temFilho34} \arrow{rrru}{temFilho34\backslash \perp} \arro
     \end{split}{}
     \end{equation}{}
     
+    A disjunção desta restrição com mais 7 do género (permutações entre o lado esquerdo e direito) formam a especificação da restrição completa.
+    
     \item Se um PN é complementar ou sintese de outro, então o seu DF é de conservação; se é sintetizado por outro, então o seu DF é de eliminação; caso não seja nenhum dos especificados, o seu DF é NE (não especificado).
     
     Dividindo em várias cláusulas obtemos e assumindo que o PN não tem filhos:
@@ -343,7 +345,7 @@ Classe\_N4 \arrow{rr}{temFilho34} \arrow{rrru}{temFilho34\backslash \perp} \arro
         & \backslash (temDF \circ \underline{NE})
     \end{split}{}
     \end{equation}{}
-\end{itemize}{}
+\end{enumerate}
 % Falar/Enumerar/Explicar alguns invariantes
 
 \section{Modelação em ALLOY} \label{SecAlloy}
@@ -387,12 +389,88 @@ sig Classe_N1 extends Classe {
 }
 \end{verbatim}{}
 
-Como podemos ver, está definida uma relação $temFilho :: Classe\_N1 \rightarrow Classe\_N2$ com uma cardinalidade \textit{set} no contradomínio, ou seja, $temFilho$ é uma relação de 0 para muitos. Mais concretamente, a relação especificada é a relação $temFilho12$ como podemos concluir olhando para o domínio e contradomínio. Uma última nota em relação à forma como foi traduzido o modelo, é a de que apesar de ser mais intuitivo na notação relacional representar uma relação como $y R x$, onde $Y \xleftarrow[]{\text{R}} X$, em Alloy é mais intuitivo modelar da forma $x R y$. Mesmo a composição relacional é feita da esquerda para a direita, ao contrário da notação relacional.
+Como podemos ver, está definida uma relação $Classe\_N2 \xleftarrow[]{\text{temFilho}} Classe\_N1$ com uma cardinalidade \textit{set} no contradomínio, ou seja, $temFilho$ é uma relação de 0 para muitos. Mais concretamente, a relação especificada é a relação $temFilho12$ como podemos concluir olhando para o domínio e contradomínio. Uma última nota em relação à forma como foi traduzido o modelo, é a de que apesar de ser mais intuitivo na notação relacional representar uma relação como $y R x$, onde $Y \xleftarrow[]{\text{R}} X$, em Alloy é mais intuitivo modelar da forma $x R y$. Mesmo a composição relacional é feita da esquerda para a direita, ao contrário da notação relacional.
 %Fazer a ponte entre o modelo formal e o modelo Alloy
 
 \subsection{Verificação}
 
-%Pendente.
+O Alloy permite especificar expressões em lógica de primeira ordem. Para isso, disponibiliza as palavras reservadas \textit{all} e \textit{some} para quantificar universalmente e existencialmente, respetivamente, variáveis tipadas no universo modelado.
+
+Uma das vantagens de utilizar a ferramenta Alloy é a de tudo poder ser visto como uma relação o que ajuda na tradução do modelo em si, como vimos na secção anterior, mas também permite fazer uma tradução praticamente direta dos invariantes em notação relacional \textit{point wise}, com o auxilio dos quantificadores, ou \textit{point free}, com o auxilio da composição de relações.
+
+Com isto, e pela mesma ordem, segue-se a tradução dos invariantes apresentados em \ref{SubSecInv}:
+\begin{enumerate}
+    \item
+    \begin{verbatim}
+all c:Classe_N3 | 
+    some c.temFilho => no c.temDF and no c.temPCA
+    \end{verbatim}{}
+    
+    \item
+    \begin{verbatim}
+all c:Classe_N3 | 
+    #c.temFilho > 1 
+        => (#c.temFilho.temDF > 1) 
+            or (#c.temFilho.temPCA > 1 
+            and (all p1,p2:c.temFilho.temPCA | 
+                p1.valor != p2.valor))
+    \end{verbatim}{}
+    
+    \item
+    \begin{verbatim}
+all c:Classe_N3 | 
+    #c.temFilho > 1 and (#c.temFilho.temPCA > 1) 
+        => (all disj c1,c2:c.temFilho |
+                c1->c2 in eSinteseDe <=> 
+                (c1.temDF in Conservacao) 
+                and (c2.temDF in Eliminacao))
+    \end{verbatim}{}
+    
+    \item
+    \begin{verbatim}
+all c:Classe_N3 
+    | #c.temFilho > 1 
+      and (c.temFilho.temDF not in Eliminacao) 
+      and (c.temFilho.temDF not in Conservacao) 
+        => one c.temFilho.temPCA.valor 
+           and (all disj c1,c2:c.temFilho {
+ 			  	(c1.temDF in Conservacao) 
+ 			  	and (c2.temDF in Eliminacao) 
+ 			  	    => c1->c2 in eSinteseDe
+			  })
+    \end{verbatim}{}
+    
+    \item
+    \begin{verbatim}
+all c1,c2:Classe_N3 | 
+    c1->c2 in eAntecessorDe 
+        => c1->c2 not in eComplementarDe + eCruzadoCom 
+                         + eSinteseDe + eSintetizadoPor 
+                         + eSucessorDe + eSuplementoDe 
+                         + eSuplementoPara
+    \end{verbatim}{}
+    
+    \item
+    \begin{verbatim}
+all c:Classe_N3 | no c.temFilho => {
+    some c.eComplementarDe => c.temDF in Conservacao
+}
+all c:Classe_N3 | no c.temFilho => {
+    !(some c.eComplementarDe) and (some c.eSinteseDe) 
+        => c.temDF in Conservacao
+}
+all c:Classe_N3 | no c.temFilho => {
+    !(some c.eComplementarDe) and !(some c.eSinteseDe) 
+    and (some c.eSintetizadoPor) 
+        => c.temDF in Eliminacao
+}
+all c:Classe_N3 | no c.temFilho => {
+    !(some c.eComplementarDe) and !(some c.eSinteseDe) 
+    and !(some c.eSintetizadoPor) 
+        => c.temDF in NE
+}
+    \end{verbatim}{}
+\end{enumerate}{}
 
 \section{Geração de \textit{queries} SPARQL}
 
