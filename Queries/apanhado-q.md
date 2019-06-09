@@ -133,6 +133,25 @@ select * where {
 
 Alterar a relação `pertenceLC` para `pertenceTS` para verificar esse caso.
 
+[**Inv2](https://github.com/bolt12/clav#inv2)
+
+Se uma Classe_N1 *não* pertence a uma LC/TS, consequentemente os seus filhos,netos,etc.. tambem não pertencem.
+
+- Alloy
+
+```Alloy
+all c:Classe_N1 | no c.pertenceLC =>
+	(all cf:c.temFilho | no cf.pertenceLC) and
+	(all cf:c.temFilho.temFilho | no cf.pertenceLC) and
+    (all cf:c.temFilho.temFilho.temFilho | no cf.pertenceLC)
+```
+
+- SPARQL
+
+```SPARQL
+
+```
+
 [**Inv24:**](https://github.com/bolt12/clav#inv24)
 
 - Alloy
@@ -190,7 +209,7 @@ all c:Classe_N3 | no c.temFilho => {
 ```SPARQL
 PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
 PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
-select ?s where {
+select * where {
 	?s :eComplementarDe ?o .
 	?s :temDF ?df.
 	?df :dfValor ?dfv.
@@ -202,10 +221,14 @@ select ?s where {
 ```SPARQL
 PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
 PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
-select ?s where {
+select * where {
 	?s :eSinteseDe ?o .
 	?s :temDF ?df.
 	?df :dfValor ?dfv.
+	
+	minus {
+		?s :eComplementarDe ?o .
+	}
 
 	FILTER (?dfv = "E" || ?dfv = "NE")
 }
@@ -214,10 +237,15 @@ select ?s where {
 ```SPARQL
 PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
 PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
-	select ?s where {
+select * where {
 	?s :eSintetizadoPor ?o .
 	?s :temDF ?df.
 	?df :dfValor ?dfv.
+
+	minus {
+		?s :eComplementarDe ?o .
+		?s :eSinteseDe ?o .
+	}
 
 	FILTER (?dfv = "C" || ?dfv = "NE")
 }
@@ -226,17 +254,14 @@ PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
 ```SPARQL
 PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
 PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
-select ?s where {
+select * where {
 	?s :rdf:type :Classe_N3 .
 	minus {
 		?s :eComplementarDe ?a .
-	}
-	minus {
+		?s :eSintetizadoPor ?c .
 		?s :eSinteseDe ?b .
 	}
-	minus {
-		?s :eSintetizadoPor ?c .
-	}
+	
 	?s :temDF ?df.
 	?df :dfValor ?dfv.
 	FILTER (?dfv = "C" || ?dfv = "E")
