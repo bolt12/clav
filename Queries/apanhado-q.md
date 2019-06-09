@@ -150,7 +150,46 @@ all c:Classe_N1 | no c.pertenceLC =>
 - SPARQL
 
 ```SPARQL
-
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where { 
+    ?c1 rdf:type :Classe_N1 .
+    
+    minus {
+    	?c1 :pertenceLC ?lc1 .
+    }
+    
+    ?c2 rdf:type :Classe_N2 .
+    ?c2 :temPai ?c1 .
+    
+    minus {
+    	?c2 :pertenceLC ?lc2 .
+    }
+    
+    ?c3 rdf:type :Classe_N3 .
+    ?c3 :temPai ?c2 .
+    
+    minus {
+        ?c3 :pertenceLC ?lc3 .
+    }
+    
+    ?c4 rdf:type :Classe_N4 .
+    ?c4 :temPai ?c3 .
+    
+    minus {
+        ?c4 :pertenceLC ?lc4 .
+    }
+    
+    FILTER (
+        ?c1 != ?c2 
+        && ?c2 != ?c3
+        && ?c3 != ?c4
+        && ?lc1 != ?lc2
+        && ?lc2 != ?lc3
+        && ?lc3 != ?lc4
+    ) 
+}
 ```
 
 [**Inv24:**](https://github.com/bolt12/clav#inv24)
