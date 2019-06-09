@@ -4,10 +4,10 @@
 ### Palavras-chave e conceitos
 
 
-- *PREFIX* - Renomeia para um nome mais curto o namespace da informação
-- *SELECT* - Seleciona as variáveis da query a mostrar no ecrã (projeção)
-- *WHERE* - Especifica a informação a retirar do dataset
-- *Variable* - Guarda informação para uso futuro, quer para SELECTionar ou dentro da secção WHERE
+- **PREFIX** - Renomeia para um nome mais curto o namespace da informação
+- **SELECT** - Seleciona as variáveis da query a mostrar no ecrã (projeção)
+- **WHERE** - Especifica a informação a retirar do dataset
+- **Variable** - Guarda informação para uso futuro, quer para SELECTionar ou dentro da secção WHERE
 
 PREFIX pode ser visto como um guia para o processador SPARQL encontrar a informação, análogo a um 'include' ou a um 'import' nas linguagens de programação.
 
@@ -85,7 +85,9 @@ curioso como é que a secção WHERE funciona? Segue-se a baixo o guia passo-a-p
 
 A geração de queries SPARQL consiste em traduzir os invariantes, especificados em Alloy, na negativa para a linguagem SPARQL para ser possível descobrir que instâncias é que não estão de acordo com os invariantes e corrigi-las.
 
-*Inv1:*
+[**Inv1:**](https://github.com/bolt12/clav#inv1)
+
+Se uma Classe_N1 pertence a uma LC/TS, consequentemente os seus filhos,netos,etc.. tambem têm de pertencer
 
 - Alloy
 
@@ -131,8 +133,7 @@ select * where {
 
 Alterar a relação `pertenceLC` para `pertenceTS` para verificar esse caso.
 
-
-*Inv24:*
+[**Inv24:**](https://github.com/bolt12/clav#inv24)
 
 - Alloy
 
@@ -159,15 +160,28 @@ select * where {
 
 Alterar a relação `temNotaAplicacao` para as outras.
 
-*Inv32:*
+[**Inv32:**](https://github.com/bolt12/clav#inv32)
 
-Quando o PN em causa é ​ síntese de​ outro, o DF deve ter o valor de “Conservação”;
+Se um PN é (por ordem de prioridade):
+    - eComplementarDe   -> DF é de conservaçao
+    - eSinteseDe        -> DF é de conservação
+    - eSintetizadoPor   -> DF é de eliminação
+    - nenhuma das acima -> DF é NE (Não especificado)
 
 - Alloy:
 
 ```Alloy
 all c:Classe_N3 | no c.temFilho => {
 	!(some c.eComplementarDe) and (some c.eSinteseDe) => c.temDF in Conservacao
+}
+all c:Classe_N3 | no c.temFilho => {
+	!(some c.eComplementarDe) and (some c.eSinteseDe) => c.temDF in Conservacao
+}
+all c:Classe_N3 | no c.temFilho => {
+	!(some c.eComplementarDe) and !(some c.eSinteseDe) and (some c.eSintetizadoPor) => c.temDF in Eliminacao
+}
+all c:Classe_N3 | no c.temFilho => {
+	!(some c.eComplementarDe) and !(some c.eSinteseDe) and !(some c.eSintetizadoPor) => c.temDF in NE
 }
 ```
 
@@ -177,30 +191,54 @@ all c:Classe_N3 | no c.temFilho => {
 PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
 PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
 select ?s where {
+?s :eComplementarDe ?o .
+?s :temDF ?df.
+?df :dfValor ?dfv.
+
+FILTER (?dfv = "E" || ?dfv = "NE")
+}
+```
+
+```SPARQL
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+select ?s where {
 ?s :eSinteseDe ?o .
-minus { ?s :temDF ?df.
-?df :dfValor "C" }
+?s :temDF ?df.
+?df :dfValor ?dfv.
+
+FILTER (?dfv = "E" || ?dfv = "NE")
 }
 ```
-
-Quando o PN em causa é sintetizado por outro, o DF deve ter o valor de "Eliminacao";
-
-- Alloy
-
-```Alloy
-all c:Classe_N3 | no c.temFilho => {
-	!(some c.eComplementarDe) and !(some c.eSinteseDe) and (some c.eSintetizadoPor) => c.temDF in Eliminacao
-}
-```
-
-- SPARQL
 
 ```SPARQL
 PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
 PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
 select ?s where {
 ?s :eSintetizadoPor ?o .
-minus { ?s :temDF ?df.
-?df :dfValor "E" }
+?s :temDF ?df.
+?df :dfValor ?dfv.
+
+FILTER (?dfv = "C" || ?dfv = "NE")
+}
+```
+
+```SPARQL
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+select ?s where {
+	?s :rdf:type :Classe_N3 .
+	minus {
+		?s :eComplementarDe ?a .
+	}
+	minus {
+		?s :eSinteseDe ?b .
+	}
+	minus {
+		?s :eSintetizadoPor ?c .
+	}
+	?s :temDF ?df.
+	?df :dfValor ?dfv.
+	FILTER (?dfv = "C" || ?dfv = "E")
 }
 ```
