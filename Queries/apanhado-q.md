@@ -102,20 +102,21 @@ all c:Classe_N1,lc:ListaConsolidada | lc = c.pertenceLC =>
 
 ```SPARQL
 PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 select * where { 
-    ?c1 :rdf:type :Classe_N1 .
+    ?c1 rdf:type :Classe_N1 .
     ?c1 :pertenceLC ?lc1 .
     
-    ?c2 :rdf:type :Classe_N2 .
+    ?c2 rdf:type :Classe_N2 .
     ?c2 :temPai ?c1 .
     ?c2 :pertenceLC ?lc2 .
     
-    ?c3 :rdf:type :Classe_N3 .
+    ?c3 rdf:type :Classe_N3 .
     ?c3 :temPai ?c2 .
     ?c3 :pertenceLC ?lc3 .
     
-    ?c4 :rdf:type :Classe_N4 .
+    ?c4 rdf:type :Classe_N4 .
     ?c4 :temPai ?c3 .
     ?c4 :pertenceLC ?lc4 .
     
@@ -143,7 +144,7 @@ Se uma Classe_N1 *não* pertence a uma LC/TS, consequentemente os seus filhos,ne
 all c:Classe_N1 | no c.pertenceLC =>
 	(all cf:c.temFilho | no cf.pertenceLC) and
 	(all cf:c.temFilho.temFilho | no cf.pertenceLC) and
-    (all cf:c.temFilho.temFilho.temFilho | no cf.pertenceLC)
+	(all cf:c.temFilho.temFilho.temFilho | no cf.pertenceLC)
 ```
 
 - SPARQL
@@ -168,6 +169,8 @@ all disj c1,c2:Classe | all n:ExemploNotaAplicacao | n in c1.temExemploNA => n n
 
 ```SPARQL
 PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 select * where { 
 	?c1 :temNotaAplicacao ?o.
 	?c2 :temNotaAplicacao ?o.
@@ -207,27 +210,36 @@ all c:Classe_N3 | no c.temFilho => {
 - SPARQL:
 
 ```SPARQL
-PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
 PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 select * where {
-	?s :eComplementarDe ?o .
-	?s :temDF ?df.
+	?c rdf:type :Classe_N3 .
+	?c :eComplementarDe ?o .
+	?c :temDF ?df.
 	?df :dfValor ?dfv.
+	
+	minus {
+        	?c :temFilho ?f .
+    	}
 
 	FILTER (?dfv = "E" || ?dfv = "NE")
 }
 ```
 
 ```SPARQL
-PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
 PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 select * where {
-	?s :eSinteseDe ?o .
-	?s :temDF ?df.
+	?c rdf:type :Classe_N3 .
+	?c :eSinteseDe ?ca .
+	?c :temDF ?df.
 	?df :dfValor ?dfv.
 	
 	minus {
-		?s :eComplementarDe ?o .
+	        ?c :temFilho ?cf .
+		?c :eComplementarDe ?cb .
 	}
 
 	FILTER (?dfv = "E" || ?dfv = "NE")
@@ -235,16 +247,19 @@ select * where {
 ```
 
 ```SPARQL
-PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
 PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 select * where {
-	?s :eSintetizadoPor ?o .
-	?s :temDF ?df.
+	?c rdf:type :Classe_N3 .
+	?c :eSintetizadoPor ?ca .
+	?c :temDF ?df.
 	?df :dfValor ?dfv.
 
 	minus {
-		?s :eComplementarDe ?o .
-		?s :eSinteseDe ?o .
+        	?c :temFilho ?f .
+		?c :eComplementarDe ?cb .
+		?c :eSinteseDe ?cc .
 	}
 
 	FILTER (?dfv = "C" || ?dfv = "NE")
@@ -252,18 +267,20 @@ select * where {
 ```
 
 ```SPARQL
-PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
 PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 select * where {
-	?s :rdf:type :Classe_N3 .
+	?c rdf:type :Classe_N3 .
+	?c :temDF ?df.
+	?df :dfValor ?dfv.
 	minus {
-		?s :eComplementarDe ?a .
-		?s :eSintetizadoPor ?c .
-		?s :eSinteseDe ?b .
+        	?c :temFilho ?cf .
+		?c :eComplementarDe ?ca .
+		?c :eSintetizadoPor ?cb .
+		?c :eSinteseDe ?cc .
 	}
 	
-	?s :temDF ?df.
-	?df :dfValor ?dfv.
 	FILTER (?dfv = "C" || ?dfv = "E")
 }
 ```
