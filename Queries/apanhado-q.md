@@ -151,10 +151,10 @@ all disj c1,c2:Classe | all n:ExemploNotaAplicacao | n in c1.temExemploNA => n n
 PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
 select * where { 
 	?c1 :temNotaAplicacao ?o.
-    ?c2 :temNotaAplicacao ?o.
-    FILTER (
-    	?c1 != ?c2
-    )
+	?c2 :temNotaAplicacao ?o.
+	FILTER (
+    		?c1 != ?c2
+	)
 }
 ```
 
@@ -191,11 +191,11 @@ all c:Classe_N3 | no c.temFilho => {
 PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
 PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
 select ?s where {
-?s :eComplementarDe ?o .
-?s :temDF ?df.
-?df :dfValor ?dfv.
+	?s :eComplementarDe ?o .
+	?s :temDF ?df.
+	?df :dfValor ?dfv.
 
-FILTER (?dfv = "E" || ?dfv = "NE")
+	FILTER (?dfv = "E" || ?dfv = "NE")
 }
 ```
 
@@ -203,23 +203,23 @@ FILTER (?dfv = "E" || ?dfv = "NE")
 PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
 PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
 select ?s where {
-?s :eSinteseDe ?o .
-?s :temDF ?df.
-?df :dfValor ?dfv.
+	?s :eSinteseDe ?o .
+	?s :temDF ?df.
+	?df :dfValor ?dfv.
 
-FILTER (?dfv = "E" || ?dfv = "NE")
+	FILTER (?dfv = "E" || ?dfv = "NE")
 }
 ```
 
 ```SPARQL
 PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
 PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
-select ?s where {
-?s :eSintetizadoPor ?o .
-?s :temDF ?df.
-?df :dfValor ?dfv.
+	select ?s where {
+	?s :eSintetizadoPor ?o .
+	?s :temDF ?df.
+	?df :dfValor ?dfv.
 
-FILTER (?dfv = "C" || ?dfv = "NE")
+	FILTER (?dfv = "C" || ?dfv = "NE")
 }
 ```
 
