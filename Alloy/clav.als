@@ -260,10 +260,14 @@ pred inv6 {
      - Caso o DF seja distinto tem que haver uma relação de sintese entre as classes 4 filhas
 */
 pred inv7 {
-	all c:Classe_N3 | #c.temFilho > 1 and (#c.temFilho.temPCA > 1) => (all disj c1,c2:c.temFilho |
-					  c1->c2 in eSinteseDe <=> 
-					  (c1.temDF in Conservacao) and (c2.temDF in Eliminacao))
-	}
+	all c:Classe_N3 | #c.temFilho > 1
+                  and (#c.temFilho.temPCA > 1)
+                  and (#c.temFilho.temDF > 1)
+                    => (all disj c1,c2:c.temFilho |
+                      c1->c2 in eSinteseDe <=>
+                      (c1.temDF in Conservacao) and (c2.temDF in Eliminacao))
+}
+
 
 /* Caso o motivo de desdobramento seja DF distinto:
      - Tem que haver uma relação de sintese entre as classes 4 filhas
@@ -323,7 +327,7 @@ pred inv13 {
     all c:Classe_N3 | c->c not in eSuplementoPara
 }
 
-/* As relações eSinteseDe, eSucessorDe e eSuplementoDe são assimétricas. */
+/* As relações eSinteseDe, eSucessorDe e eSuplementoDe são antimétricas. */
 pred inv14 {
 	Antisymmetric[Classe_N3<:eSinteseDe, Classe_N3]
 	Antisymmetric[Classe_N3<:eSintetizadoPor, Classe_N3]

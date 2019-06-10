@@ -387,6 +387,252 @@ select * where {
 }
 ```
 
+[**Inv9:**](https://github.com/bolt12/clav#inv9)
+
+Os termos de indice vão para os 4ºs niveis.
+
+- Alloy
+
+```Alloy
+all c:Classe_N3,t:c.temTI | some c.temFilho => t in c.temFilho.temTI
+```
+
+- SPARQL
+
+```SPARQL
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where { 
+    ?c rdf:type :Classe_N3 .
+    ?c :temFilho ?cf .
+    ?c :temTI ?ti .
+   	
+    FILTER (
+        NOT EXISTS { ?cf :temTI ?ti . }
+	)
+}
+```
+
+[**Inv10:**](https://github.com/bolt12/clav#inv10)
+
+Se um PN (Classe 3) for complementar de outro que se desdobra ao 4o nível, é necessário,
+   com base no critério de complementaridade informacional, a relação manter-se ao 3o nível.
+   Pelo menos um dos 4os níveis deve ser de conservação.
+
+- Alloy
+
+```Alloy
+all disj c1,c2:Classe_N3 | c1 in c2.eComplementarDe 
+                           and some c2.temFilho 
+                            => some c3:c2.temFilho | 
+                              c3.temDF in Conservacao
+```
+
+- SPARQL
+
+```SPARQL
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where {
+    ?c1 rdf:type :Classe_N3 .
+    ?c2 rdf:type :Classe_N3 .
+
+    ?c1 :eComplementarDe ?c2 .
+    ?c2 :temFilho ?c2f .
+
+    ?c2f :temDF ?df .
+    ?df :dfValor ?dfv .
+
+    FILTER (
+      ?c1 != ?c2
+      && ?dfv != "C"
+    )
+}
+```
+
+[**Inv11:**](https://github.com/bolt12/clav#inv11)
+
+Um processo só tem participantes se for transveral.
+
+- Alloy
+
+```Alloy
+all c:Classe_N3 | False = c.processoTransversal 
+                    => no (c.temParticipanteComunicador
+                        + c.temParticipanteIniciador
+                        + c.temParticipanteApreciador
+                        + c.temParticipanteDecisor
+                        + c.temParticipanteAssessor
+                        + c.temParticipanteExecutor)
+```
+
+- SPARQL
+
+```SPARQL
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where {
+    ?c rdf:type :Classe_N3 .
+    ?c :processoTransversal "N" .
+    
+    FILTER (
+        EXISTS { ?c :temParticipanteComunicador ?ca . }
+        ||
+        EXISTS { ?c :temParticipanteIniciador ?ca . }
+        ||
+        EXISTS { ?c :temParticipanteApreciador ?ca . }
+        ||
+        EXISTS { ?c :temParticipanteDecisor ?ca . }
+        ||
+        EXISTS { ?c :temParticipanteAssessor ?ca . }
+        ||
+        EXISTS { ?c :temParticipanteExecutor ?ca . }
+    )
+}
+```
+
+[**Inv12:**](https://github.com/bolt12/clav#inv12)
+
+As relações `eComplementarDe` e `eCruzadoCom` são simétricas.
+
+- Alloy
+
+```Alloy
+Symmetric[eComplementarDe]
+
+Symmetric[eCruzadoCom]
+```
+
+- SPARQL
+
+```SPARQL
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where {
+    ?c1 :eComplementarDe ?c2 .
+    ?c3 :eCruzadoCom ?c4 .
+
+    FILTER (
+        ?c1 != ?c2 
+        && ?c3 != ?c4
+        && NOT EXISTS { ?c2 :eComplementarDe ?c2 . }
+        && NOT EXISTS { ?c4 :eCruzadoCom ?c3 . }
+    )
+}
+```
+
+[**Inv13:**](https://github.com/bolt12/clav#inv13)
+
+Na relação temRelProc um PN não se relaciona com ele próprio.
+
+- Alloy
+
+```Alloy
+all c:Classe_N3 | c->c not in eAntecessorDe
+all c:Classe_N3 | c->c not in eComplementarDe
+all c:Classe_N3 | c->c not in eCruzadoCom
+all c:Classe_N3 | c->c not in eSinteseDe
+all c:Classe_N3 | c->c not in eSintetizadoPor
+all c:Classe_N4 | c->c not in eSinteseDe
+all c:Classe_N4 | c->c not in eSintetizadoPor
+all c:Classe_N3 | c->c not in eSucessorDe
+all c:Classe_N3 | c->c not in eSuplementoDe
+all c:Classe_N3 | c->c not in eSuplementoPara
+```
+
+- SPARQL
+
+```SPARQL
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where {
+    ?c1 rdf:type :Classe_N3 .
+    ?c2 rdf:type :Classe_N4.
+
+    FILTER (
+      EXISTS { ?c1 :eAntecessorDe ?c1 . }
+      ||
+      EXISTS { ?c1 :eComplementarDe ?c1 . }
+      ||
+      EXISTS { ?c1 :eCruzadoCom ?c1 . }
+      ||
+      EXISTS { ?c1 :eSinteseDe ?c1 . }
+      ||
+      EXISTS { ?c1 :eSintetizadoPor ?c1 . }
+      ||
+      EXISTS { ?c2 :eSinteseDe ?c2 . }
+      ||
+      EXISTS { ?c2 :eSintetizadoPor ?c2 . }
+      ||
+      EXISTS { ?c1 :eSucessorDe ?c1 . }
+      ||
+      EXISTS { ?c1 :eSuplementoDe ?c1 . }
+      ||
+      EXISTS { ?c1 :eSuplementoPara ?c1 . }
+    )
+
+}
+```
+
+[**Inv14:**](https://github.com/bolt12/clav#inv14)
+
+As relações `eSinteseDe`, `eSucessorDe` e `eSuplementoDe` são antisimétricas.
+
+
+- Alloy
+
+```Alloy
+Antisymmetric[Classe_N3<:eSinteseDe, Classe_N3]
+Antisymmetric[Classe_N3<:eSintetizadoPor, Classe_N3]
+Antisymmetric[Classe_N4<:eSinteseDe, Classe_N4]
+Antisymmetric[Classe_N4<:eSintetizadoPor, Classe_N4]
+
+Antisymmetric[eSucessorDe, Classe_N3]
+Antisymmetric[eAntecessorDe, Classe_N3]
+
+Antisymmetric[eSuplementoDe, Classe_N3]
+Antisymmetric[eSuplementoPara, Classe_N3]
+```
+
+- SPARQL
+
+```SPARQL
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where {
+    ?c1 :eSinteseDe ?c2 .
+    ?c2 :eSinteseDe ?c1 .
+
+    ?c3 :eSintetizadoPor ?c4 .
+    ?c4 :eSintetizadoPor ?c3 .
+
+    ?c5 :eSucessorDe ?c6.
+    ?c6 :eSucessorDe ?c5.
+
+    ?c7 :eSuplementoDe ?c8.
+    ?c8 :eSuplementoDe ?c7.
+
+    ?c9 :eSuplementoPara ?c10.
+    ?c10 :eSuplementoDe ?c9.
+
+    FILTER (
+        ?c1 != ?c2
+        && ?c3 != ?c4
+        && ?c5 != ?c6
+        && ?c7 != ?c8
+        && ?c9 != ?c10
+    )
+
+}
+```
+
+
 [**Inv15:**](https://github.com/bolt12/clav#inv15)
 
 Um PN só pode ter uma relação com outro PN.
@@ -454,6 +700,62 @@ select * where {
 ```
 
 Mais 7 queries SPARQL com permutações semelhantes às do Alloy.
+
+[**Inv16:**](https://github.com/bolt12/clav#inv16)
+
+Se um PN se desdobra em 4ºs nivéis os Termos de Indice passam para os filhos.
+
+- Alloy
+
+```Alloy
+all c:Classe_N3 | some c.temFilho => no c.temTI
+```
+
+- SPARQL
+
+```SPARQL
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where { 
+    ?c rdf:type :Classe_N3 .
+    ?c :temFilho ?cf .
+
+
+    FILTER (
+        EXISTS { ?c :temTI ?ti .}
+    )
+}
+```
+
+[**Inv17:**](https://github.com/bolt12/clav#inv17)
+
+Os Termos de Índice de um PN não podem existir em mais nenhuma classe 3.
+
+- Alloy
+
+```Alloy
+all disj c1,c2:Classe_N3,ti:TermoIndice | ti in c1.temTI => ti not in c2.temTI
+```
+
+- SPARQL
+
+```SPARQL
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where { 
+    ?c1 rdf:type :Classe_N3 .
+    ?c2 rdf:type :Classe_N3 .
+
+    ?c1 :temTI ?ti .
+
+    FILTER (
+      ?c1 != ?c2
+      && EXISTS { ?c2 :temTI ?ti . }
+    )
+}
+```
 
 [**Inv24:**](https://github.com/bolt12/clav#inv24)
 
@@ -525,7 +827,7 @@ select * where {
         	?c :temFilho ?f .
     	}
 
-	FILTER (?dfv = "E" || ?dfv = "NE")
+	FILTER (?dfv != "C")
 }
 ```
 
@@ -544,7 +846,7 @@ select * where {
 		?c :eComplementarDe ?cb .
 	}
 
-	FILTER (?dfv = "E" || ?dfv = "NE")
+	FILTER (?dfv != "C")
 }
 ```
 
@@ -564,7 +866,7 @@ select * where {
 		?c :eSinteseDe ?cc .
 	}
 
-	FILTER (?dfv = "C" || ?dfv = "NE")
+	FILTER (?dfv != "E")
 }
 ```
 
@@ -583,6 +885,6 @@ select * where {
 		?c :eSinteseDe ?cc .
 	}
 	
-	FILTER (?dfv = "C" || ?dfv = "E")
+	FILTER (?dfv != "NE")
 }
 ```
