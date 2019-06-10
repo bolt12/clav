@@ -291,6 +291,7 @@ select * where {
 [**Inv7:**](https://github.com/bolt12/clav#inv7)
 
 Caso o motivo de desdobramento seja PCA distinto:
+
      - Caso o DF seja distinto tem que haver uma relação de sintese entre as classes 4 filhas
 
 - Alloy
@@ -339,7 +340,9 @@ select * where {
 [**Inv8:**](https://github.com/bolt12/clav#inv8)
 
 Caso o motivo de desdobramento seja DF distinto:
+
      - Tem que haver uma relação de sintese entre as classes 4 filhas
+     
      - O PCA é igual
 
 - Alloy
