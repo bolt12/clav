@@ -85,9 +85,21 @@ curioso como é que a secção WHERE funciona? Segue-se a baixo o guia passo-a-p
 
 A geração de queries SPARQL consiste em traduzir os invariantes, especificados em Alloy, na negativa para a linguagem SPARQL para ser possível descobrir que instâncias é que não estão de acordo com os invariantes e corrigi-las.
 
+### Notas uteis
+
+- Lei de DeMorgan: 
+    - -(P \/ Q) <=> -P /\ -Q
+    - -(P /\ Q) <=> -P \/ -Q
+
+- Implicação:
+    - A -> B <=> - A \/ B
+    - -(A -> B) <=> A /\ -B
+
+### Traduções
+
 [**Inv1:**](https://github.com/bolt12/clav#inv1)
 
-Se uma Classe_N1 pertence a uma LC/TS, consequentemente os seus filhos,netos,etc.. tambem têm de pertencer
+Se uma Classe_N1 pertence a uma LC/TS, consequentemente os seus filhos,netos,etc.. tambem têm de pertencer.
 
 - Alloy
 
@@ -134,7 +146,7 @@ select * where {
 
 Alterar a relação `pertenceLC` para `pertenceTS` para verificar esse caso.
 
-[**Inv2](https://github.com/bolt12/clav#inv2)
+[**Inv2**](https://github.com/bolt12/clav#inv2)
 
 Se uma Classe_N1 *não* pertence a uma LC/TS, consequentemente os seus filhos,netos,etc.. tambem não pertencem.
 
@@ -163,34 +175,283 @@ select * where {
     ?c2 rdf:type :Classe_N2 .
     ?c2 :temPai ?c1 .
     
-    minus {
-    	?c2 :pertenceLC ?lc2 .
-    }
-    
     ?c3 rdf:type :Classe_N3 .
     ?c3 :temPai ?c2 .
-    
-    minus {
-        ?c3 :pertenceLC ?lc3 .
-    }
     
     ?c4 rdf:type :Classe_N4 .
     ?c4 :temPai ?c3 .
     
-    minus {
-        ?c4 :pertenceLC ?lc4 .
-    }
-    
     FILTER (
-        ?c1 != ?c2 
-        && ?c2 != ?c3
-        && ?c3 != ?c4
-        && ?lc1 != ?lc2
-        && ?lc2 != ?lc3
-        && ?lc3 != ?lc4
-    ) 
+      ?c1 != ?c2 
+      && ?c2 != ?c3
+      && ?c3 != ?c4 &&
+      (EXISTS { ?c2 :pertenceLC ?lc2 . }
+      || EXISTS { ?c3 :pertenceLC ?lc3 . }
+      || EXISTS { ?c4 :pertenceLC ?lc4 . })
+    )
+    
 }
 ```
+
+[**Inv3**](https://github.com/bolt12/clav#inv3)
+
+As relações `temDF` e `temPCA`, não existem numa classe 3 se esta tiver filhos.
+
+- Alloy
+
+```Alloy
+all c:Classe_N3 | some c.temFilho => no c.temDF and no c.temPCA
+```
+
+- SPARQL
+
+```SPARQL
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where {
+   ?c rdf:type :Classe_N3 .
+   ?c :temFilho ?cf .
+
+    FILTER (
+        EXISTS { ?c :temDF ?df . } ||
+        EXISTS { ?c :temPCA ?pca . }
+    )
+}
+```
+
+[**Inv4**](https://github.com/bolt12/clav#inv4)
+
+As relações `temDF` e `temPCA`, existem numa classe 3 se esta não tiver filhos.
+
+- Alloy
+
+```Alloy
+all c:Classe_N3 | no c.temFilho => one c.temDF and one c.temPCA
+```
+
+- SPARQL
+
+```SPARQL
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where {
+   ?c rdf:type :Classe_N3 .
+   
+   FILTER (
+      NOT EXISTS { ?c :temFilho ?cf . } &&
+      (NOT EXISTS { ?c :temDF ?df . } ||
+      NOT EXISTS { ?c :temPCA ?pca . })
+   )
+}
+```
+
+[**Inv6:**](https://github.com/bolt12/clav#inv6)
+
+Apenas se desdobram devido a um PCA distinto ou DF distinto.
+
+- Alloy
+
+```Alloy
+all c:Classe_N3 | #c.temFilho > 1 => (#c.temFilho.temDF > 1) or
+				     (#c.temFilho.temPCA > 1 
+                                     and (all p1,p2:c.temFilho.temPCA | p1.valor != p2.valor))
+```
+
+- SPARQL
+
+```SPARQL
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where {
+    ?c rdf:type :Classe_N3 .
+    ?c :temFilho ?cf1 .
+    ?c :temFilho ?cf2 .
+
+    ?cf1 :temDF ?df1 .
+    ?cf2 :temDF ?df2 .
+    ?df1 :dfValor ?dfv1 .
+    ?df2 :dfValor ?dfv2 .
+
+    ?cf1 :temPCA ?pca1 .
+    ?cf2 :temPCA ?pca2 .
+    ?pca1 :pcaValor ?pcav1 .
+    ?pca2 :pcaValor ?pcav2 .
+
+    FILTER (
+      ?cf1 != ?cf2
+      && ?dfv1 = ?dfv2
+      && ?pcav1 = ?pcav2
+    )
+}
+```
+
+[**Inv7:**](https://github.com/bolt12/clav#inv7)
+
+Caso o motivo de desdobramento seja PCA distinto:
+     - Caso o DF seja distinto tem que haver uma relação de sintese entre as classes 4 filhas
+
+- Alloy
+
+```Alloy
+all c:Classe_N3 | #c.temFilho > 1
+                  and (#c.temFilho.temPCA > 1)
+                  and (#c.temFilho.temDF > 1)
+                    => (all disj c1,c2:c.temFilho |
+                      c1->c2 in eSinteseDe <=>
+                      (c1.temDF in Conservacao) and (c2.temDF in Eliminacao))
+  }
+```
+
+- SPARQL
+
+```SPARQL
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where { 
+    ?c rdf:type :Classe_N3 .
+    ?c :temFilho ?cf1 .
+    ?c :temFilho ?cf2 .
+
+    ?cf1 :temPCA ?pca1 .
+    ?cf2 :temPCA ?pca2 .
+    ?pca1 :pcaValor ?pcav1 .
+    ?pca2 :pcaValor ?pcav2 .
+
+    ?cf1 :temDF ?df1 .
+    ?cf2 :temDF ?df2 .
+    ?df1 :dfValor ?dfv1 .
+    ?df2 :dfValor ?dfv2 .
+    
+
+    FILTER (
+      ?cf1 != ?cf2
+      && ?pcav1 != ?pcav2
+      && ?dfv1 != ?dfv2
+      && NOT EXISTS { ?cf1 :eSinteseDe ?cf2 . }
+    )
+}
+```
+
+[**Inv8:**](https://github.com/bolt12/clav#inv8)
+
+Caso o motivo de desdobramento seja DF distinto:
+     - Tem que haver uma relação de sintese entre as classes 4 filhas
+     - O PCA é igual
+
+- Alloy
+
+```Alloy
+all c:Classe_N3 | #c.temFilho > 1 
+                  and (c.temFilho.temDF not in Eliminacao) 
+                  and (c.temFilho.temDF not in Conservacao) =>
+                    one c.temFilho.temPCA.valor 
+                    and (all disj c1,c2:c.temFilho {
+                        (c1.temDF in Conservacao) and (c2.temDF in Eliminacao) 
+                          => c1->c2 in eSinteseDe
+                        })
+```
+
+- SPARQL
+
+```SPARQL
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where { 
+    ?c rdf:type :Classe_N3 .
+    ?c :temFilho ?cf1 .
+    ?c :temFilho ?cf2 .
+
+    ?cf1 :temPCA ?pca1 .
+    ?cf2 :temPCA ?pca2 .
+    ?pca1 :pcaValor ?pcav1 .
+    ?pca2 :pcaValor ?pcav2 .
+
+    ?cf1 :temDF ?df1 .
+    ?cf2 :temDF ?df2 .
+    ?df1 :dfValor ?dfv1 .
+    ?df2 :dfValor ?dfv2 .
+    
+
+    FILTER (
+      ?cf1 != ?cf2
+      && ?dfv1 != ?dfv2
+      && (
+      NOT EXISTS { ?cf1 :eSinteseDe ?cf2 . }
+      || ?pcav1 != ?pcav2)
+    )
+}
+```
+
+[**Inv15:**](https://github.com/bolt12/clav#inv15)
+
+- Alloy
+
+```Alloy
+all c1,c2:Classe_N3 | c1->c2 in eAntecessorDe => c1->c2 not in
+  eComplementarDe + eCruzadoCom + eSinteseDe + eSintetizadoPor + eSucessorDe + eSuplementoDe + eSuplementoPara
+or
+all c1,c2:Classe_N3 | c1->c2 in eComplementarDe => c1->c2 not in
+  eAntecessorDe + eCruzadoCom + eSinteseDe + eSintetizadoPor + eSucessorDe + eSuplementoDe + eSuplementoPara
+or
+all c1,c2:Classe_N3 | c1->c2 in eCruzadoCom => c1->c2 not in
+  eAntecessorDe + eComplementarDe + eSinteseDe + eSintetizadoPor + eSucessorDe + eSuplementoDe + eSuplementoPara
+or
+all c1,c2:Classe_N3 | c1->c2 in eSinteseDe => c1->c2 not in
+  eAntecessorDe + eComplementarDe + eCruzadoCom + eSintetizadoPor + eSucessorDe + eSuplementoDe + eSuplementoPara
+or
+all c1,c2:Classe_N3 | c1->c2 in eSintetizadoPor => c1->c2 not in
+  eAntecessorDe + eComplementarDe + eCruzadoCom + eSinteseDe + eSucessorDe + eSuplementoDe + eSuplementoPara
+or
+all c1,c2:Classe_N3 | c1->c2 in eSucessorDe => c1->c2 not in
+  eAntecessorDe + eComplementarDe + eCruzadoCom + eSinteseDe + eSintetizadoPor + eSuplementoDe + eSuplementoPara
+or
+all c1,c2:Classe_N3 | c1->c2 in eSuplementoDe => c1->c2 not in
+  eAntecessorDe + eComplementarDe + eCruzadoCom + eSinteseDe + eSintetizadoPor + eSucessorDe + eSuplementoPara
+or
+all c1,c2:Classe_N3 | c1->c2 in eSuplementoPara => c1->c2 not in
+  eAntecessorDe + eComplementarDe + eCruzadoCom + eSinteseDe + eSintetizadoPor + eSucessorDe + eSuplementoDe
+```
+
+- SPARQL
+
+```SPARQL
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where { 
+  ?c1 rdf:type :Classe_N3 .
+  ?c2 rdf:type :Classe_N3 .
+  ?c1 :eAntecessorDe ?c2 .
+
+  FILTER (
+    ?c1 != ?c2
+    &&
+    (
+    EXISTS { ?c1 :eComplementarDe ?c2 . }
+    ||
+    EXISTS { ?c1 :eCruzadoCom ?c2 . }
+    ||
+    EXISTS { ?c1 :eSinteseDe ?c2 . }
+    ||
+    EXISTS { ?c1 :eSintetizadoPor ?c2 . }
+    ||
+    EXISTS { ?c1 :eSucessorDe ?c2 . }
+    ||
+    EXISTS { ?c1 :eSuplementoDe ?c2 . }
+    ||
+    EXISTS { ?c1 :eSuplementoPara ?c2 . }
+    )
+  )
+
+}
+```
+
+Mais 7 queries SPARQL com permutações semelhantes às do Alloy.
 
 [**Inv24:**](https://github.com/bolt12/clav#inv24)
 
