@@ -389,6 +389,8 @@ select * where {
 
 [**Inv15:**](https://github.com/bolt12/clav#inv15)
 
+Um PN só pode ter uma relação com outro PN.
+
 - Alloy
 
 ```Alloy
