@@ -15,7 +15,9 @@ O QGen recorre às bibliotecas Haskell Happy + Alex para gerar, apartir de uma g
 o parser do sub set Alloy e, após efetuar o parsing do invariante nega-o e, com o
 resultado, apresenta a query SPARQL resultante.
 
-#### Gerar query
+São utilizados os nomes das relações presentes nos invariantes sendo que uma ideia para o futuro seria a de ser possível, a partir de um ficheiro de configuração, fazer a correspondência entre as relações em Alloy e as relações em RDF. Um exemplo mais concreto e comum seria o de funções inversas com nomes diferentes, uma vez que em Alloy é comum o uso do operador '~'.
+
+### Gerar query
 
 **Dependências:**
 
