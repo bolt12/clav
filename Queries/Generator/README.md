@@ -32,7 +32,8 @@ Onde 'invariante.als' é um ficheiro com o invariante a traduzir.
 
 ```
 Invariante lido:
-"all disj c1,c2:Classe_N3,ti:TermoIndice | ti in c1.temTI implies ti not in c2.temTI"
+"all disj c1,c2:Classe_N3,ti:TermoIndice | (ti in c1.temTI) implies ti not in c2.temTI"
+
 Invariante negado:
-"some disj c1,c2:Classe_N3,ti:TermoIndice | ti not in c1.temTI and ti in c2.temTI"
+"some disj c1,c2:Classe_N3,ti:TermoIndice | (ti in c1.temTI) and ti in c2.temTI"
 ```
