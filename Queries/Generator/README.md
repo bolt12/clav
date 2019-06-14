@@ -5,7 +5,7 @@ O QGen é uma prova de conceito que visa, a partir de uma especificação de um
 predicado em Alloy, gerar a query SPARQL correspondente.
 
 Neste momento o QGen suporta apenas um sub conjunto da sintaxe Alloy. Não
-suporta setas (emparelhamento), nem o converso de relações ('~') e as
+suporta setas (emparelhamento), a composição de relações (R.S) o converso de relações ('~'), a inclusão (in), e as
 implicações devem ser desambiguadas à esquerda ((A) => B) assim como todas as expressões sujeitas a um operador binário.
 
 
