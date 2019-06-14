@@ -8,10 +8,113 @@ import Tokens
 import Data.Functor.Foldable
 import Data.Functor.Foldable.TH
 import Data.List
+import Test.QuickCheck
 
 makeBaseFunctor ''Exp
 
--- (1) Negate AST -----
+-- (1) Generate SPARQL -----
+
+generateE :: Exp -> Gen String
+generateE = cata g
+  where
+    g (EQuantF q d bb) = do
+      r2 <- generateBB bb
+      r1 <- generateD d 
+      return ("\n" ++ r1 ++ r2 ++ "\n")
+    g (EUnOpF Id e)    = return ""
+    -- g (EUnOpF Neg e)      = 
+    -- g (EUnOpF Not e)      = 
+    g (EUnOpF ONo e)   = do
+      r <- e
+      return ("\n\t\t" ++ "NOT EXISTS { " ++ "\t" ++ r ++ "\t\t} \n")
+    g (EUnOpF OSome e) = do
+      r <- e
+      return ("\n\t\t" ++ "EXISTS { " ++ "\t" ++ r ++ "\t\t} \n")
+    g (EBinOpF And el er)          = do
+      r1 <- el
+      r2 <- er
+      return (r1 ++ "\n\t && " ++ r2)
+    g (EBinOpF Or el er)           = do
+      r1 <- el
+      r2 <- er
+      return ("(" ++ r1 ++ "\n\t || " ++ r2 ++ ")")
+    -- g (EBinOpF Intersection el er) = 
+    -- g (EBinOpF Iff el er)          = 
+    -- g (EBinOpF Implies el er)      = 
+    -- g (EBinOpF Union el er)        = 
+    -- g (EBinOpF Minus el er)        = 
+    g (EBinOpF Comp el er)         = do
+      r1 <- el
+      r2 <- er
+      z  <- shuffle (['a'..'z'] ++ ['A'..'Z'] ++ ['0'..'9'])
+      return ("\n\t\t " ++ ('?':r1) ++ " " ++ (':':r2) ++ " " ++ ('?':take 3 z) ++ " . " ++ "\n")
+    g (ECompF Eq el er)  = do
+      r1 <- el
+      r2 <- er
+      return (r1 ++ " = " ++ r2)
+    -- g (ECompF In el er)  = 
+    g (ENCompF Eq el er) = do
+      r1 <- el
+      r2 <- er
+      return (r1 ++ " != " ++ r2)
+    -- g (ENCompF In el er) = 
+    g (EBlockF b)         = generateB b
+    g (EParF e)           = e
+    g (EWordF s)          = return s
+
+generateD :: Decl -> Gen String
+generateD (DeclW ws e)      = return $ genD (zip ws (repeat " rdf:type ")) (getType e)
+generateD (DeclDW ws e)     = return $ genD (zip ws (repeat " rdf:type ")) (getType e) 
+                              ++ "\n\tFILTER ( " 
+                              ++ intercalate "\n\t && " (map genFilter (permutations ws)) 
+                              ++ "\t)\n\n"
+-- generateD (DeclWD ws e)     = 
+-- generateD (DeclDWD ws e)    = 
+generateD (DeclWR ws e d)   = do 
+    gd <- generateD d 
+    return (gd ++ genD (zip ws (repeat " rdf:type ")) (getType e))
+generateD (DeclDWR ws e d)  = do
+    gd <- generateD d 
+    return (gd ++ genD (zip ws (repeat " rdf:type ")) (getType e) 
+               ++ "\n\tFILTER ( " 
+               ++ intercalate "\n\t && " (map genFilter (permutations ws)) 
+               ++ "\t)\n\n")
+-- generateD (DeclWDR ws e d)  =
+-- generateD (DeclDWDR ws e d) = 
+
+genD :: [(String, String)] -> String -> String
+genD [] _ = []
+genD ((w, r) : ts) t = "\t " ++ ('?':w) ++ r ++ (':':t) ++ " . \n" ++ genD ts t
+
+genFilter :: [String] -> String
+genFilter [h, h'] = ('?':h) ++ " != " ++ ('?':h')
+genFilter (h:h':t) = ('?':h) ++ " != " ++ ('?':h') ++ "\n\t && " ++ genFilter (h':t)
+
+getType :: Exp -> String
+getType (EWord s) = s
+getType _         = ""
+
+generateBB :: BlockOrBar -> Gen String
+generateBB (BlockB b) = generateB b
+generateBB (BBar e)   = do
+    ge <- generateE e
+    return ("\n\t" ++ "FILTER ( " ++ ge ++ " \t)")
+
+generateC :: CompareOp -> String
+generateC Eq = " = "
+generateC In = " in "
+
+generateNC :: CompareOp -> String
+generateNC Eq = " != "
+generateNC In = " not in "
+
+generateB :: Block -> Gen String
+generateB EmptyBlock = return ""
+generateB (Block e) = do
+    ge <- generateE e
+    return ("\n\t" ++ "FILTER ( " ++ ge ++ " \t)")
+
+-- (2) Negate AST -----
 
 negateE :: Exp -> Exp
 negateE = cata g
@@ -66,7 +169,7 @@ negateB :: Block -> Block
 negateB EmptyBlock = EmptyBlock
 negateB (Block e) = Block (negateE e)
 
--- (2) Show AST ------
+-- (3) Show AST ------
 
 showE :: Exp -> String
 showE = cata g
@@ -128,14 +231,29 @@ showB :: Block -> String
 showB EmptyBlock = "{}"
 showB (Block e) = "{" ++ showE e ++ "}"
 
+-- (3) Main -----
+
+prefixes :: String
+prefixes = "PREFIX : <http://jcr.di.uminho.pt/m51-clav#> \n"
+           ++ "PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#> \n"
+           ++ "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \n"
+
 main :: IO ()
 main = do
     s <- getContents
     let ast = parseAlloy (scanTokens s)
         r   = showE ast
-        nr  = showE . negateE $ ast
+        nr  = negateE ast
+        nrs = showE nr
+    nrq <- generate (generateE nr)
+
     putStrLn "Invariante lido:"
     print r
-    putStrLn "Invariante negado:"
-    print nr
+    putStrLn "\nInvariante negado:"
+    print nrs
+    putStrLn "\nQuery gerada:"
+    putStrLn prefixes
+    putStrLn "SELECT * WHERE {\n"
+    putStrLn nrq
+    putStrLn "\n}"
     
