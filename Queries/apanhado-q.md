@@ -88,12 +88,12 @@ A geração de queries SPARQL consiste em traduzir os invariantes, especificados
 ### Notas uteis
 
 - Lei de DeMorgan: 
-    - -(P \/ Q) <=> -P /\ -Q
-    - -(P /\ Q) <=> -P \/ -Q
+    - -(P \\/ Q) <=> -P \/\ -Q
+    - -(P \/\ Q) <=> -P \\/ -Q
 
 - Implicação:
-    - A -> B <=> - A \/ B
-    - -(A -> B) <=> A /\ -B
+    - A -> B <=> - A \\/ B
+    - -(A -> B) <=> A \/\ -B
 
 ### Traduções
 
