@@ -98,7 +98,7 @@ Podemos então concluir, que o Alloy teve um impacto positivo na análise das re
 
 \section{Modelo Formal} \label{SecModel}
 
-Nesta secção será abordada a especificação formal do CLAV. Será introduzida alguma notação relativa ao cálculo relacional utilizado na formalização do problema e, posteriormente, tanto as classes presentes no domínio do modelo como as relações entre estas serão enunciadas. Por último, devido à grande quantidade de invariantes existentes, apenas serão apresentados 6, que melhor ilustram a dimensão e complexidade do CLAV. A formalização apresentada nesta secção, assim como a especificação dos invariantes em notação relacional teve o contributo e ajuda do professor José Nuno Oliveira.
+Nesta secção será abordada a especificação formal do CLAV. Será introduzida alguma notação relativa ao cálculo relacional utilizado na formalização do problema e, posteriormente, tanto as classes presentes no domínio do modelo como as relações entre estas serão enunciadas. Por último, devido à grande quantidade de invariantes existentes, apenas serão apresentados 3, que melhor ilustram a dimensão e complexidade do CLAV. A formalização apresentada nesta secção, assim como a especificação dos invariantes em notação relacional teve o contributo e ajuda do professor José Nuno Oliveira.
 
 \subsection{Calcular com relações\cite{jno}\cite{jno-5}}
 
@@ -286,29 +286,22 @@ Concretamente e intuitivamente, à luz de \ref{vis_geral} e \ref{vis_pn}, uma cl
     ker\ temDF \subseteq id
 \end{equation}
 
-As restrições mais complexas envolvem são as que envolvem as endo-relações dos PNs e as que envolvem desdobramento ao 4º nível. Contextualizando, apesar de não ser frequente, um processo de negócio (nível 3) é passível de ser desdobrado em dois ou mais processos filho (nível 4) sendo que, podem existir dois motivos de desdobramento: DF distinto ou PCA distinto. As classes filho resultantes de tais desdobramentos possuem critérios de avaliação e classificação específicos que devem ser respeitados. Em baixo seguem-se 6 invariantes que caracterizam algumas das restrições impostas:
+As restrições mais complexas envolvem são as que envolvem as endo-relações dos PNs e as que envolvem desdobramento ao 4º nível. Contextualizando, apesar de não ser frequente, um processo de negócio (nível 3) é passível de ser desdobrado em dois ou mais processos filho (nível 4) sendo que, podem existir dois motivos de desdobramento: DF distinto ou PCA distinto. As classes filho resultantes de tais desdobramentos possuem critérios de avaliação e classificação específicos que devem ser respeitados. Em baixo seguem-se 3 invariantes que caracterizam algumas das restrições impostas:
 
 \begin{enumerate}
     \item Se uma classe de nível 3 tem filhos, então não possui DF nem PCA (o oposto caso não tenha filhos):
     
     \begin{equation}
     \label{inv-3-4}
-        \begin{tikzcd}
-                                                                                                                            &  &            & DF \arrow{ld}{\perp} \arrow[bend left]{dd}{R} \\
-Classe\_N4 \arrow{rr}{temFilho34} \arrow{rrru}{temFilho34\backslash \perp} \arrow[swap]{rrrd}{temFilho34\backslash \perp} &  & Classe\_N3 &                                                                                                           \\
-                                                                                                                            &  &            & PCA \arrow[swap]{lu}{\perp}                                                                                 
+    \begin{tikzcd}
+                                                                                                                                                                                           &  &            & DF \arrow[swap]{ld}{temDF}                                       \\
+Classe\_N4 \arrow{rr}{temFilho34} \arrow[bend left]{rrru}{temFilho34\backslash \neg temDF} \arrow[swap, bend right]{rrrd}{temFilho34\backslash \neg temPCA} \arrow[swap, bend right]{rrr}{R} &  & Classe\_N3 & DF \times PCA \arrow[swap]{u}{\pi_1} \arrow{d}{\pi_2} \\
+                                                                                                                                                                                           &  &            & PCA \arrow{lu}{temPCA}                                     
 \end{tikzcd}
     \end{equation}{}
-
     \begin{equation*}
-        R = (temFilho34\backslash \perp)/ (temFilho34\backslash \perp)
+        R = \langle (temFilho34\backslash \neg temDF), (temFilho34\backslash \neg temPCA) \rangle
     \end{equation*}{}
-    
-    \item Só existe desdobramento caso o PCA ou DF dos filhos sejam distintos:
-    
-    \item Caso o motivo de desdobramento seja PCA distinto e caso o DF seja distinto tem que haver uma relação de síntese entre as classes de nível 4 filhas:
-    
-    \item Caso o motivo de desdobramento seja DF distinto então, tem que haver uma relação de síntese entre as classes de nível 4 filhas e o valor do PCA tem que ser igual:
     
     \item Um PN só pode ter uma (endo) relação com outro PN:
     
@@ -350,13 +343,13 @@ Classe\_N4 \arrow{rr}{temFilho34} \arrow{rrru}{temFilho34\backslash \perp} \arro
 
 \section{Modelação em ALLOY} \label{SecAlloy}
 
-A partir do momento em que a formalização está completa resta-nos verificar se, dados os invariantes e a sua conjunção, existem instâncias capazes de habitarem o modelo. Uma solução seria, aleatoriamente e manualmente, popular os conjuntos de cada entidade e de forma \textit{ad hoc} e dispendiosa, verificar se aquele conjunto poderia habitar o modelo. Outra solução bastante mais eficaz será a de recorrar a um \textit{model checker} que, de forma automática, faz essa geração e verificação por nós. As ferramentas de \textit{model checking} tornam o ciclo de vida de verificação muito mais produtivo.
+A partir do momento em que a formalização está completa resta-nos verificar se, dados os invariantes e a sua conjunção, existem instâncias capazes de habitarem o modelo. Uma solução seria, aleatoriamente e manualmente, popular os conjuntos de cada entidade e de forma \textit{ad hoc} e dispendiosa, verificar se aquele conjunto poderia habitar o modelo. Outra solução bastante mais eficaz será a de recorrer a um \textit{model checker} que, de forma automática, faz essa geração e verificação por nós. As ferramentas de \textit{model checking} tornam o ciclo de vida de verificação muito mais produtivo.
 
 É aqui que o Alloy Analyzer tem impacto e ajuda a perceber que tipo de refinamento deve ser dado ao modelo formalizado e de que maneira é que os invariantes têm impacto nas instâncias possíveis. Nesta secção será abordada a maneira como foi feita a tradução do modelo formal, assim como os seus invariantes para Alloy.
 
 \subsection{Especificação}
 
-Começando pelo domínio do modelo, a cada entidade corresponderá uma \textit{sig} em Alloy. A noção de herança, capturada pelas Classes, Referencial Classificativo e Destino Final é traduzida pelas primitivas \textit{abstract} e \textit{extends}, insipiradas pela programação orientada a objetos. Sendo Assim:
+Começando pelo domínio do modelo, a cada entidade corresponderá uma \textit{sig} em Alloy. A noção de herança, capturada pelas Classes, Referencial Classificativo e Destino Final é traduzida pelas primitivas \textit{abstract} e \textit{extends}, inspiradas pela programação orientada a objetos. Sendo Assim:
 
 \begin{verbatim}
 abstract sig ReferencialClassificativo {}
@@ -376,7 +369,7 @@ sig Classe_N4 extends Classe {}
 /* ---- */
 
 abstract sig DestinoFinal {
-	temJustificacao: one Justificacao
+    temJustificacao: one Justificacao
 }
 sig Eliminacao, Conservacao, NE extends DestinoFinal {}
 \end{verbatim}{}
@@ -385,12 +378,11 @@ No que diz respeito às relações envolvidas, o Alloy permite especificar as re
 
 \begin{verbatim}
 sig Classe_N1 extends Classe {
-	temFilho: set Classe_N2,
+    temFilho: set Classe_N2,
 }
 \end{verbatim}{}
 
 Como podemos ver, está definida uma relação $Classe\_N2 \xleftarrow[]{\text{temFilho}} Classe\_N1$ com uma cardinalidade \textit{set} no contradomínio, ou seja, $temFilho$ é uma relação de 0 para muitos. Mais concretamente, a relação especificada é a relação $temFilho12$ como podemos concluir olhando para o domínio e contradomínio. Uma última nota em relação à forma como foi traduzido o modelo, é a de que apesar de ser mais intuitivo na notação relacional representar uma relação como $y R x$, onde $Y \xleftarrow[]{\text{R}} X$, em Alloy é mais intuitivo modelar da forma $x R y$. Mesmo a composição relacional é feita da esquerda para a direita, ao contrário da notação relacional.
-%Fazer a ponte entre o modelo formal e o modelo Alloy
 
 \subsection{Verificação}
 
@@ -404,40 +396,6 @@ Com isto, e pela mesma ordem, segue-se a tradução dos invariantes apresentados
     \begin{verbatim}
 all c:Classe_N3 | 
     some c.temFilho => no c.temDF and no c.temPCA
-    \end{verbatim}{}
-    
-    \item
-    \begin{verbatim}
-all c:Classe_N3 | 
-    #c.temFilho > 1 
-        => (#c.temFilho.temDF > 1) 
-            or (#c.temFilho.temPCA > 1 
-            and (all p1,p2:c.temFilho.temPCA | 
-                p1.valor != p2.valor))
-    \end{verbatim}{}
-    
-    \item
-    \begin{verbatim}
-all c:Classe_N3 | 
-    #c.temFilho > 1 and (#c.temFilho.temPCA > 1) 
-        => (all disj c1,c2:c.temFilho |
-                c1->c2 in eSinteseDe <=> 
-                (c1.temDF in Conservacao) 
-                and (c2.temDF in Eliminacao))
-    \end{verbatim}{}
-    
-    \item
-    \begin{verbatim}
-all c:Classe_N3 
-    | #c.temFilho > 1 
-      and (c.temFilho.temDF not in Eliminacao) 
-      and (c.temFilho.temDF not in Conservacao) 
-        => one c.temFilho.temPCA.valor 
-           and (all disj c1,c2:c.temFilho {
- 			  	(c1.temDF in Conservacao) 
- 			  	and (c2.temDF in Eliminacao) 
- 			  	    => c1->c2 in eSinteseDe
-			  })
     \end{verbatim}{}
     
     \item
