@@ -6,18 +6,23 @@ predicado em Alloy, gerar a query SPARQL correspondente.
 
 Neste momento o QGen suporta apenas um sub conjunto da sintaxe Alloy. Não
 suporta setas (emparelhamento), nem o converso de relações ('~') e as
-implicações devem ser desambiguadas à esquerda ((A) => B) .
+implicações devem ser desambiguadas à esquerda ((A) => B) assim como todas as expressões sujeitas a um operador binário.
 
 
 ### Como funciona
 
 O QGen recorre às bibliotecas Haskell Happy + Alex para gerar, apartir de uma gramática,
-o parser do sub set Alloy e, após efetuar o parsing do invariante nega-o e com o
+o parser do sub set Alloy e, após efetuar o parsing do invariante nega-o e, com o
 resultado, apresenta a query SPARQL resultante.
 
 #### Gerar query
 
-Para instalar o QGen basta fazer `make` na diretoria onde se encontram os
+**Dependências:**
+
+- QuickCheck
+- recursion-schemes
+
+Após instaladas as depêndencias, para instalar o QGen basta fazer `make` na diretoria onde se encontram os
 ficheiros.
 
 Uma vez instalado:
@@ -32,8 +37,41 @@ Onde 'invariante.als' é um ficheiro com o invariante a traduzir.
 
 ```
 Invariante lido:
-"all disj c1,c2:Classe_N3,ti:TermoIndice | (ti in c1.temTI) implies ti not in c2.temTI"
+Invariante lido:
+"all c:Classe_N3 | (some c.temFilho) implies (no c.temDF) and (no c.temPCA)"
 
 Invariante negado:
-"some disj c1,c2:Classe_N3,ti:TermoIndice | (ti in c1.temTI) and ti in c2.temTI"
+"some c:Classe_N3 | (some c.temFilho) and (some c.temDF) or (some c.temPCA)"
+
+Query gerada:
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#> 
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#> 
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> 
+
+SELECT * WHERE {
+
+
+	 ?c rdf:type :Classe_N3 . 
+
+	FILTER ( 
+		EXISTS { 	
+		 ?c :temFilho ?blG . 
+		} 
+
+	 && (
+		EXISTS { 	
+		 ?c :temDF ?76V . 
+		} 
+
+	 || 
+		EXISTS { 	
+		 ?c :temPCA ?FIn . 
+		} 
+) 	)
+
+
+}
+
 ```
+
+Como é possível verificar a query gerada permite ao processador SPARQL encontrar as instâncias que não verificam o invariante.
