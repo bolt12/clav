@@ -75,3 +75,9 @@ SELECT * WHERE {
 ```
 
 Como é possível verificar a query gerada permite ao processador SPARQL encontrar as instâncias que não verificam o invariante.
+
+### WIP
+
+Neste momento o QGen é apenas uma prova de conceito e apenas é capaz de gerar queries apartir de invariantes bastante simples e que sejam escritos apenas no subset suportado. No entanto, é suficiente para provar que é possível gerar queries SPARQL a partir de uma especificação Alloy. Estas queries são traduções corretas uma vez que ambas as ferramentas (SPARQL e Alloy) são baseadas em lógica de primeira ordem logo, partilham, à partida de uma representação base.
+
+Talvez no futuro este gerador consiga ser desenvolvido de forma a completar toda a sintaxe Alloy.
