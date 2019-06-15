@@ -96,6 +96,26 @@ Podemos então concluir, que o Alloy teve um impacto positivo na análise das re
 
 \subsection{Avaliação Final}
 
+Depois de validado o modelo e os seus invariantes de forma estática, isto é,
+apenas verificar que as restrições impostas são coerentes e que existem
+instâncias capazes de habitar o modelo, o percurso natural no ciclo de vida de
+verificação seria o de modelar a passagem do tempo e as suas ações possíveis
+(p. ex. a inserção de novas classes). No entanto, devido a restrições de tempo,
+seria mais produtivo ser capaz de observar que instâncias, presentes na base de
+dados, é que não iam de encontro às várias restrições. Nesse sentido, em relação
+à última fase do projeto foram traduzidos os invariantes em Alloy para
+\textit{queries} SPARQL, motor de base de dados escolhido para armazenar toda a
+informação.
+
+Devido à dimensão do modelo e quantidade de invariantes, foi colocada a hipótese
+de traduzir, automaticamente, as \textit{queries} dada uma especificação.
+
+Sendo assim, a terceira e última fase do trabalho consistiu na tradução manual
+dos invariantes Alloy mais específicos para \textit{queries} SPARQL e na
+exploração e desenvolvimento de uma prova de conceito capaz de gerar
+automaticamente  \textit{query}. Estes dois últimos pontos serão explicados com
+maior detalhe na secção \ref{SecQueries}
+
 \section{Modelo Formal} \label{SecModel}
 
 Nesta secção será abordada a especificação formal do CLAV. Será introduzida alguma notação relativa ao cálculo relacional utilizado na formalização do problema e, posteriormente, tanto as classes presentes no domínio do modelo como as relações entre estas serão enunciadas. Por último, devido à grande quantidade de invariantes existentes, apenas serão apresentados 3, que melhor ilustram a dimensão e complexidade do CLAV. A formalização apresentada nesta secção, assim como a especificação dos invariantes em notação relacional teve o contributo e ajuda do professor José Nuno Oliveira.
@@ -393,6 +413,7 @@ Uma das vantagens de utilizar a ferramenta Alloy é a de tudo poder ser visto co
 Com isto, e pela mesma ordem, segue-se a tradução dos invariantes apresentados em \ref{SubSecInv}:
 \begin{enumerate}
     \item
+    \label{inv-simples}
     \begin{verbatim}
 all c:Classe_N3 | 
     some c.temFilho => no c.temDF and no c.temPCA
@@ -430,7 +451,185 @@ all c:Classe_N3 | no c.temFilho => {
     \end{verbatim}{}
 \end{enumerate}{}
 
-\section{Geração de \textit{queries} SPARQL}
+\section{Tradução de \textit{queries} SPARQL}
+\label{SecQueries}
+
+Um modelo formal em Alloy permite raciocinar, utilizando cálculo relacionar e
+métodos matemáticos, sobre o problema e, tirando partido do \textit{model
+checker} eliminar erros de conceção ingénuos ou que possam ter passado
+despercebidos. O modelo apresentado nas secções anteriores é apenas um modelo
+estático sendo que sabemos apenas, com alguma certeza, de que este é passível de
+ser habitado. No entanto, são necessárias operações sobre este para que evolua,
+a partir de um estado inicial. Entre outras, estas operações correspondem a
+ações de inserção, atualização, remoção de instâncias no modelo e não devem
+permitir que as restrições impostas sejam violadas.
+
+Um próximo passo na especificação do modelo formal do CLAV seria o de
+especificar tais ações estudando assim a passagem do tempo e que tipo de
+propriedades, tanto de \textit{safety} como de \textit{liveness}, seriam
+verificadas. Mas, devido ao estado avaçado do projeto, um passo alternativo no
+contexto do CLAV, mais produtivo uma vez que já se encontra em produção, é o de
+a partir da especificação dos invariantes, traduzi-los em \textit{queries}
+SPARQL que apanhem as instâncias da base de dados que não verificam as
+restrições impostas. Desta forma, será fácil identificar as anomalias no sistema
+e resolvê-las.
+
+A tradução dos invariantes poderá ser feita de duas formas: manualmente ou
+automaticamente. Nas secções abaixo será explicada de que forma é que ambas
+estas formas de tradução podem ser executadas.
+
+\subsection{Tradução manual}
+
+Numa primeira vista, a sintaxe de uma \textit{query} SPARQL, sendo este motor
+orientado a grafos, é bastante semelhante à de um motor de bases de dados
+relacional como podemos ver em baixo.
+
+\begin{verbatim}
+PREFIX P: <URI>
+
+SELECT ?Property1 ?Property2
+
+WHERE {
+    ?v1 P:rel1 ?Property1 .
+    ?v1 P:rel2 ?Property2 .
+}
+\end{verbatim}
+
+Resumidamente e como podemos observar, o processador SPARQL funciona com
+\textit{pattern matching} de triplos RDF. Baseado em lógica de primeira ordem e
+teoria de conjuntos, suporta operadores como a união e interseção de resultados,
+que permitem uma manipulação dos resultados de forma bastante simples e
+intuitiva.
+
+A partir desta informação e sabendo que o Alloy é baseado em lógica de primeira
+ordem e álgebra relacional, é possível inferir que estas duas linguagens possuam
+bastantes semelhanças. A verdade é que para os invariantes mais simples a
+tradução é quase direta havendo apenas o pequeno pormenor de que é necessário
+especificar a \textit{query} na forma do invariante negado e em formato CNF
+(\textit{Conjunctional Normal Form}).
+
+Ilustrando então com um exemplo simples, como o invariante \ref{inv-simples}, a
+sua forma negada será:
+
+\begin{verbatim}
+some c:Classe_N3 | 
+    (some c.temFilho) and ((some c.temDF) or (some c.temPCA))
+\end{verbatim} 
+
+A tradução manual deste invariante passa por analisar o tipo de variavéis a
+identificar onde, neste caso, serão do tipo \texttt{Classe\_N3} e filtrar os
+resultados pelas instâncias que verificam as condições impostas no corpo do
+invariante. O processador SPARQL possui o operador FILTER que permite fazer esta
+filtragem, resultando na queries seguinte:
+
+\begin{verbatim}
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where {
+   ?c rdf:type :Classe_N3 .
+   ?c :temFilho ?cf .
+
+    FILTER (
+        EXISTS { ?c :temDF ?df . } ||
+        EXISTS { ?c :temPCA ?pca . }
+    )
+}
+\end{verbatim} 
+
+\textit{Queries} mais complexas e que envolvam composição de funções, uma vez
+que o SPARQL não é capaz de tal funcionalidade, a \textit{query} deve
+explicitamente unificar as variáveis de forma obter o mesmo comportamento.
+Veja-se o exemplo:
+
+\begin{verbatim}
+some c:Classe_N3,t:c.temTI | 
+    (some c.temFilho) and (t not in c.temFilho.temTI)
+\end{verbatim} 
+
+\begin{verbatim}
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where { 
+    ?c rdf:type :Classe_N3 .
+    ?c :temFilho ?cf .
+    ?c :temTI ?ti .
+   	
+    FILTER (
+        NOT EXISTS { ?cf :temTI ?ti . }
+	)
+}
+\end{verbatim} 
+
+Esta sistematização dá uma boa confiança de que a automação deste processo está
+ao alcance.
+
+\subsection{Geração automática}
+
+Como vimos anteriormente, o processo de tradução da especificação de um
+invariante em Alloy para um \textit{query} SPARQL passa por várias fases. A
+primeira fase é a da negação do invariante em si, utilizando regras de lógica de
+primeira ordem conhecidas. A segunda fase, passa por identificar as variáveis
+quantificadas e o seu tipo sendo que, estas serão traduzidas em unificações do
+tipo: \texttt{?var rdf:type :<Tipo>}. A terceira fase passa por identificar, no
+corpo do invariante quais as condições que as variáveis unificadas devem
+respeitar de forma a encontrar as instâncias incorretas da base de dados. Esta
+última fase, tira partido do operador FILTER como mencionado na secção anterior.
+
+Para ser possível sistematizar este processo é necessário carregar o invariante
+numa estrutura que permita a sua manipulação de forma prática, ou seja, é
+necessário efetuar o \textit{parsing} do invariante para uma estrutura de dados.
+Para este efeito, recorreu-se ao par Happy + Alex, bibliotecas em Haskell que
+permitem a especificação de uma gramática e de um \textit{lexer} e respetivas
+ações semânticas apartir de uma DSL (\textit{Domain Specific Language}) bastante
+semelhante à das ferramentas Yacc/Flex da linguagem C, para obter a árvore de
+sintaxe, e à biblioteca \textit{recursion-schemes} para a sua manipulação. É de
+salientar que o gerador desenvolvido tem como objetivo ser apenas uma prova de
+conceito logo, é apenas capaz de efetuar o \textit{parsing} de um sub conjunto
+bastante limitado da sintaxe Alloy e de gerar \textit{queries} a partir de
+especificações bastante simples.
+
+Tendo o \textit{parsing} feito, apenas é necessário transformar a estrutura
+obtida fazendo-a passar pelas várias fases enunciadas em cima. A codificação das
+várias fases em Haskell foi bastante simples devido à escolha de manter o nome
+das relações usadas na ontologia base no modelo Alloy pois, não foi necessário
+fazer nenhuma correspondência entre os nomes. Sendo assim, segue-se abaixo, a
+\textit{query} gerada automaticamente a partir do invariante escolhido na secção
+anterior:
+
+\begin{verbatim}
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#> 
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#> 
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> 
+
+SELECT * WHERE {
+
+
+	 ?c rdf:type :Classe_N3 . 
+
+	FILTER ( 
+		EXISTS { 	
+		 ?c :temFilho ?blG . 
+		} 
+
+	 && (
+		EXISTS { 	
+		 ?c :temDF ?76V . 
+		} 
+
+	 || 
+		EXISTS { 	
+		 ?c :temPCA ?FIn . 
+		} 
+        ))
+
+}
+\end{verbatim}
+
+As \textit{queries} geradas são traduções corretas uma vez que ambas as
+ferramentas (SPARQL e Alloy) são baseadas nos mesmo princípios teóricos logo,
+partilham, à partida, de uma representação base (isomorfismo).
 
 \section{Dificuldades}
 
