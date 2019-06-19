@@ -26,7 +26,10 @@
 \usepackage{multirow}
 \usepackage{float}
 \usepackage{cite}
-\usepackage{tikz-cd} 
+\usepackage{tikz-cd}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{listings}
+\usepackage{alloy-style}
 
 \begin{document}
 %
@@ -371,7 +374,7 @@ A partir do momento em que a formalização está completa resta-nos verificar s
 
 Começando pelo domínio do modelo, a cada entidade corresponderá uma \textit{sig} em Alloy. A noção de herança, capturada pelas Classes, Referencial Classificativo e Destino Final é traduzida pelas primitivas \textit{abstract} e \textit{extends}, inspiradas pela programação orientada a objetos. Sendo Assim:
 
-\begin{verbatim}
+\begin{lstlisting}[language=alloy, frame=single]
 abstract sig ReferencialClassificativo {}
 sig ListaConsolidada extends ReferencialClassificativo {}
 sig TabelaSelecao extends ReferencialClassificativo {}
@@ -392,15 +395,15 @@ abstract sig DestinoFinal {
     temJustificacao: one Justificacao
 }
 sig Eliminacao, Conservacao, NE extends DestinoFinal {}
-\end{verbatim}{}
+\end{lstlisting}{}
 
 No que diz respeito às relações envolvidas, o Alloy permite especificar as relações entre cada entidade da seguinte forma:
 
-\begin{verbatim}
+\begin{lstlisting}[language=alloy, frame=single]
 sig Classe_N1 extends Classe {
     temFilho: set Classe_N2,
 }
-\end{verbatim}{}
+\end{lstlisting}{}
 
 Como podemos ver, está definida uma relação $Classe\_N2 \xleftarrow[]{\text{temFilho}} Classe\_N1$ com uma cardinalidade \textit{set} no contradomínio, ou seja, $temFilho$ é uma relação de 0 para muitos. Mais concretamente, a relação especificada é a relação $temFilho12$ como podemos concluir olhando para o domínio e contradomínio. Uma última nota em relação à forma como foi traduzido o modelo, é a de que apesar de ser mais intuitivo na notação relacional representar uma relação como $y R x$, onde $Y \xleftarrow[]{\text{R}} X$, em Alloy é mais intuitivo modelar da forma $x R y$. Mesmo a composição relacional é feita da esquerda para a direita, ao contrário da notação relacional.
 
@@ -414,23 +417,23 @@ Com isto, e pela mesma ordem, segue-se a tradução dos invariantes apresentados
 \begin{enumerate}
     \item
     \label{inv-simples}
-    \begin{verbatim}
+    \begin{lstlisting}[language=alloy, frame=single]
 all c:Classe_N3 | 
     some c.temFilho => no c.temDF and no c.temPCA
-    \end{verbatim}{}
+    \end{lstlisting}{}
     
     \item
-    \begin{verbatim}
+    \begin{lstlisting}[language=alloy, frame=single]
 all c1,c2:Classe_N3 | 
     c1->c2 in eAntecessorDe 
         => c1->c2 not in eComplementarDe + eCruzadoCom 
                          + eSinteseDe + eSintetizadoPor 
                          + eSucessorDe + eSuplementoDe 
                          + eSuplementoPara
-    \end{verbatim}{}
+    \end{lstlisting}{}
     
     \item
-    \begin{verbatim}
+    \begin{lstlisting}[language=alloy, frame=single]
 all c:Classe_N3 | no c.temFilho => {
     some c.eComplementarDe => c.temDF in Conservacao
 }
@@ -448,7 +451,7 @@ all c:Classe_N3 | no c.temFilho => {
     and !(some c.eSintetizadoPor) 
         => c.temDF in NE
 }
-    \end{verbatim}{}
+    \end{lstlisting}{}
 \end{enumerate}{}
 
 \section{Tradução de \textit{queries} SPARQL}
@@ -456,19 +459,18 @@ all c:Classe_N3 | no c.temFilho => {
 
 Um modelo formal em Alloy permite raciocinar, utilizando cálculo relacionar e
 métodos matemáticos, sobre o problema e, tirando partido do \textit{model
-checker} eliminar erros de conceção ingénuos ou que possam ter passado
+checker}, eliminar erros de conceção ingénuos ou que possam ter passado
 despercebidos. O modelo apresentado nas secções anteriores é apenas um modelo
 estático sendo que sabemos apenas, com alguma certeza, de que este é passível de
-ser habitado. No entanto, são necessárias operações sobre este para que evolua,
-a partir de um estado inicial. Entre outras, estas operações correspondem a
+ser habitado. No entanto, para que este evolua, a partir de um estado inicial,
+é necessária a execução de um conjunto de operações. Entre outras, estas operações correspondem a
 ações de inserção, atualização, remoção de instâncias no modelo e não devem
-permitir que as restrições impostas sejam violadas.
+permitir que as restrições impostas sejam , isto é, devem preservar os invariantes.
 
 Um próximo passo na especificação do modelo formal do CLAV seria o de
-especificar tais ações estudando assim a passagem do tempo e que tipo de
+especificar tais ações, estudando assim a passagem do tempo e que tipo de
 propriedades, tanto de \textit{safety} como de \textit{liveness}, seriam
-verificadas. Mas, devido ao estado avaçado do projeto, um passo alternativo no
-contexto do CLAV, mais produtivo uma vez que já se encontra em produção, é o de
+verificadas. Mas, devido ao estado avaçado do projeto, um passo alternativo, e mais produtivo uma vez que já se encontra em produção, é o de
 a partir da especificação dos invariantes, traduzi-los em \textit{queries}
 SPARQL que apanhem as instâncias da base de dados que não verificam as
 restrições impostas. Desta forma, será fácil identificar as anomalias no sistema
@@ -484,7 +486,7 @@ Numa primeira vista, a sintaxe de uma \textit{query} SPARQL, sendo este motor
 orientado a grafos, é bastante semelhante à de um motor de bases de dados
 relacional como podemos ver em baixo.
 
-\begin{verbatim}
+\begin{lstlisting}[language=sparql, frame=single, basicstyle=\scriptsize]
 PREFIX P: <URI>
 
 SELECT ?Property1 ?Property2
@@ -493,40 +495,39 @@ WHERE {
     ?v1 P:rel1 ?Property1 .
     ?v1 P:rel2 ?Property2 .
 }
-\end{verbatim}
+\end{lstlisting}
 
-Resumidamente e como podemos observar, o processador SPARQL funciona com
+Resumidamente, e como podemos observar, o processador SPARQL funciona com
 \textit{pattern matching} de triplos RDF. Baseado em lógica de primeira ordem e
-teoria de conjuntos, suporta operadores como a união e interseção de resultados,
+teoria de conjuntos, suporta operadores como a união e interseção,
 que permitem uma manipulação dos resultados de forma bastante simples e
 intuitiva.
 
-A partir desta informação e sabendo que o Alloy é baseado em lógica de primeira
-ordem e álgebra relacional, é possível inferir que estas duas linguagens possuam
-bastantes semelhanças. A verdade é que para os invariantes mais simples a
-tradução é quase direta havendo apenas o pequeno pormenor de que é necessário
+A partir desta informação, e sabendo que o Alloy é baseado em lógica de primeira
+ordem e álgebra relacional, é possível inferir que estas duas linguagens possuem
+bastantes semelhanças. A verdade é que, para os invariantes mais simples a
+tradução é quase direta havendo apenas o pequeno pormenor que é o facto de ser necessário
 especificar a \textit{query} na forma do invariante negado e em formato CNF
 (\textit{Conjunctional Normal Form}).
 
-Ilustrando então com um exemplo simples, como o invariante \ref{inv-simples}, a
-sua forma negada será:
+Ilustrando então com um exemplo simples, a forma negada do invariante \ref{inv-simples} será:
 
-\begin{verbatim}
+\begin{lstlisting}[language=alloy, frame=single]
 some c:Classe_N3 | 
     (some c.temFilho) and ((some c.temDF) or (some c.temPCA))
-\end{verbatim} 
+\end{lstlisting} 
 
-A tradução manual deste invariante passa por analisar o tipo de variavéis a
+A tradução manual deste invariante passa por analisar o tipo de variáveis a
 identificar onde, neste caso, serão do tipo \texttt{Classe\_N3} e filtrar os
 resultados pelas instâncias que verificam as condições impostas no corpo do
 invariante. O processador SPARQL possui o operador FILTER que permite fazer esta
 filtragem, resultando na \textit{query} seguinte:
 
-\begin{verbatim}
+\begin{lstlisting}[language=sparql, frame=single, basicstyle=\scriptsize]
 PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
 PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-select * where {
+SELECT * WHERE {
    ?c rdf:type :Classe_N3 .
    ?c :temFilho ?cf .
 
@@ -535,23 +536,23 @@ select * where {
         EXISTS { ?c :temPCA ?pca . }
     )
 }
-\end{verbatim} 
+\end{lstlisting} 
 
-\textit{Queries} mais complexas e que envolvam composição de funções, uma vez
+\textit{Queries} mais complexas e que envolvam composição de relações, uma vez
 que o SPARQL não é capaz de tal funcionalidade, a \textit{query} deve
 explicitamente unificar as variáveis de forma obter o mesmo comportamento.
 Veja-se o exemplo:
 
-\begin{verbatim}
+\begin{lstlisting}[language=alloy, frame=single]
 some c:Classe_N3,t:c.temTI | 
     (some c.temFilho) and (t not in c.temFilho.temTI)
-\end{verbatim} 
+\end{lstlisting} 
 
-\begin{verbatim}
+\begin{lstlisting}[language=sparql, frame=single, basicstyle=\scriptsize]
 PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
 PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-select * where { 
+SELECT * WHERE { 
     ?c rdf:type :Classe_N3 .
     ?c :temFilho ?cf .
     ?c :temTI ?ti .
@@ -560,7 +561,7 @@ select * where {
         NOT EXISTS { ?cf :temTI ?ti . }
 	)
 }
-\end{verbatim} 
+\end{lstlisting} 
 
 Esta sistematização dá uma boa confiança de que a automação deste processo está
 ao alcance.
@@ -568,7 +569,7 @@ ao alcance.
 \subsection{Geração automática}
 
 Como vimos anteriormente, o processo de tradução da especificação de um
-invariante em Alloy para um \textit{query} SPARQL passa por várias fases. A
+invariante em Alloy para uma \textit{query} SPARQL passa por várias fases. A
 primeira fase é a da negação do invariante em si, utilizando regras de lógica de
 primeira ordem conhecidas. A segunda fase, passa por identificar as variáveis
 quantificadas e o seu tipo sendo que, estas serão traduzidas em unificações do
@@ -582,9 +583,9 @@ numa estrutura que permita a sua manipulação de forma prática, ou seja, é
 necessário efetuar o \textit{parsing} do invariante para uma estrutura de dados.
 Para este efeito, recorreu-se ao par Happy + Alex, bibliotecas em Haskell que
 permitem a especificação de uma gramática e de um \textit{lexer} e respetivas
-ações semânticas apartir de uma DSL (\textit{Domain Specific Language}) bastante
-semelhante à das ferramentas Yacc/Flex da linguagem C, para obter a árvore de
-sintaxe, e à biblioteca \textit{recursion-schemes} para a sua manipulação. É de
+ações semânticas a partir de uma DSL (\textit{Domain Specific Language}) bastante
+semelhante à das ferramentas Yacc/Flex da linguagem C, para obter a árvore sintática,
+e à biblioteca \textit{recursion-schemes} para a sua manipulação. É de
 salientar que o gerador desenvolvido tem como objetivo ser apenas uma prova de
 conceito logo, é apenas capaz de efetuar o \textit{parsing} de um sub conjunto
 bastante limitado da sintaxe Alloy e de gerar \textit{queries} a partir de
@@ -594,11 +595,11 @@ Tendo o \textit{parsing} feito, apenas é necessário transformar a estrutura
 obtida fazendo-a passar pelas várias fases enunciadas em cima. A codificação das
 várias fases em Haskell foi bastante simples devido à escolha de manter o nome
 das relações usadas na ontologia base no modelo Alloy pois, não foi necessário
-fazer nenhuma correspondência entre os nomes. Sendo assim, segue-se abaixo, a
+fazer nenhuma correspondência entre os nomes. Sendo assim, segue-se abaixo, o resultado da 
 \textit{query} gerada automaticamente a partir do invariante escolhido na secção
 anterior:
 
-\begin{verbatim}
+\begin{lstlisting}[language=sparql, frame=single, basicstyle=\scriptsize]
 PREFIX : <http://jcr.di.uminho.pt/m51-clav#> 
 PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#> 
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> 
@@ -606,30 +607,30 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 SELECT * WHERE {
 
 
-	 ?c rdf:type :Classe_N3 . 
+    ?c rdf:type :Classe_N3 . 
 
-	FILTER ( 
-		EXISTS { 	
-		 ?c :temFilho ?blG . 
-		} 
+    FILTER ( 
+        EXISTS { 	
+            ?c :temFilho ?blG . 
+        } 
 
-	 && (
-		EXISTS { 	
-		 ?c :temDF ?76V . 
-		} 
+    && (
+        EXISTS { 	
+         ?c :temDF ?76V . 
+        } 
 
-	 || 
-		EXISTS { 	
-		 ?c :temPCA ?FIn . 
-		} 
-        ))
+    || 
+        EXISTS { 	
+         ?c :temPCA ?FIn . 
+        } 
+    ))
 
 }
-\end{verbatim}
+\end{lstlisting}
 
-As \textit{queries} geradas são traduções corretas uma vez que ambas as
+Pode-se afirmar que as \textit{queries} geradas são traduções corretas uma vez que ambas as
 ferramentas (SPARQL e Alloy) são baseadas nos mesmo princípios teóricos logo,
-partilham, à partida, de uma representação base (isomorfismo).
+partilham, à partida, de uma representação base.
 
 \section{Dificuldades}
 
