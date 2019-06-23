@@ -27,9 +27,9 @@
 \usepackage{float}
 \usepackage{cite}
 \usepackage{tikz-cd}
-\usepackage[dvipsnames]{xcolor}
 \usepackage{listings}
 \usepackage{alloy-style}
+\usepackage[title]{appendix}
 
 \begin{document}
 %
@@ -116,7 +116,7 @@ de traduzir, automaticamente, as \textit{queries} dada uma especificação.
 Sendo assim, a terceira e última fase do trabalho consistiu na tradução manual
 dos invariantes Alloy mais específicos para \textit{queries} SPARQL e na
 exploração e desenvolvimento de uma prova de conceito capaz de gerar
-automaticamente  \textit{query}. Estes dois últimos pontos serão explicados com
+automaticamente estas \textit{queries}. Estes dois últimos pontos serão explicados com
 maior detalhe na secção \ref{SecQueries}
 
 \section{Modelo Formal} \label{SecModel}
@@ -212,7 +212,7 @@ $\equiv$ \{ \textit{splitting; nesting} \}
 %Introduzir cada uma das signatures e o seu contexto no problema.
 Com a especificação do domínio do modelo formal pretendemos descrever a essência do problema em questão que é o de garantir que, dadas as entidades existentes e as suas relações, o conjunto de invariantes impostos são coerentes, não se contradizem e permitem instâncias semanticamente corretas.
 
-Sendo assim, nesta secção e na próxima, apesar do domínio especificado ser maior, apenas iremos apresentar as especificações que melhor capturam a essência do modelo, por questões de síntese. No entanto, será possível consultar o modelo na totalidade em anexo.
+Sendo assim, nesta secção e na próxima, apesar do domínio especificado ser maior, apenas iremos apresentar as especificações que melhor capturam a essência do modelo, por questões de síntese. No entanto, será possível consultar o modelo Alloy, na totalidade, em anexo.
 
 \subsubsection{Referencial Classificativo:}
 
@@ -470,7 +470,7 @@ permitir que as restrições impostas sejam , isto é, devem preservar os invari
 Um próximo passo na especificação do modelo formal do CLAV seria o de
 especificar tais ações, estudando assim a passagem do tempo e que tipo de
 propriedades, tanto de \textit{safety} como de \textit{liveness}, seriam
-verificadas. Mas, devido ao estado avaçado do projeto, um passo alternativo, e mais produtivo uma vez que já se encontra em produção, é o de
+verificadas. Mas, devido ao estado avançado do projeto, um passo alternativo, e mais produtivo uma vez que já se encontra em produção, é o de
 a partir da especificação dos invariantes, traduzi-los em \textit{queries}
 SPARQL que apanhem as instâncias da base de dados que não verificam as
 restrições impostas. Desta forma, será fácil identificar as anomalias no sistema
@@ -564,7 +564,9 @@ SELECT * WHERE {
 \end{lstlisting} 
 
 Esta sistematização dá uma boa confiança de que a automação deste processo está
-ao alcance.
+ao alcance e, demonstra a importância e utilidade do ciclo de vida de verificação na produtividade e qualidade do trabalho produzido onde,
+a formalização dos invariantes em Alloy permite perceber o impacto destes no modelo e extrair de forma correta \textit{queries} SPARQL que 
+identificam instâncias incorretas na aplicação em produção.
 
 \subsection{Geração automática}
 
@@ -634,16 +636,21 @@ partilham, à partida, de uma representação base.
 
 \section{Dificuldades}
 
-%Documentação do projeto do CLAV:
-%    - espalhada
-%    - desorganizada
-%    - desatualizada
-%    Implicações:
-%        - Tivemos que fazer o apanhado de tudo
+Durante o desenvolvimento do projeto foram surgindo algumas dificuldades que impactaram na produtividade e no progresso do trabalho. Apesar dos aspetos negativos associados às dificuldades encontradas, nem sempre a sua existência foi vista como algo mau.
 
-%Alguns dos invariantes não eram estáveis e sofreram alterações ao longo do projeto assim como alguns pormenores relacionados com o modelo em si.
+O facto da documentação do projeto do CLAV, na fase inicial, ter estado espalhada, desorganizada e desatualizada afetou negativamente o progresso do trabalho uma vez que, foi necessário agrupar toda a informação relevante e organiza-la, de forma a facilitar as fases de desenvolvimento futuras. Alguns dos invariantes identificados eram ambíguos, característica da linguagem natural onde foram especificados. e apesar de este facto dificultar a interpretação dos mesmos, a aplicação de métodos rigorosos contribuiu para o refinamento destes.
+
+Outra dificuldade que também contribuiu significativamente para o resultado final deste trabalho foram as restrições de tempo. Uma vez que este trabalho foi realizado em paralelo com mais quatro unidades curriculares, houve um período de estagnação (época de exames) onde os autores não tiveram tanta capacidade de trabalho.
 
 \section{Conclusão e Trabalho Futuro} \label{SecConclusion}
+
+Observando o trabalho no seu estado final, é possível afirmar que este foi concluído com sucesso. O trabalho conseguiu alcançar todos os objetivos propostos: a formalização do modelo e a verificação deste. A utilização de métodos formais e, em particular, o \textit{model checker} Alloy, foram bastante eficazes em detetar erros que não tinham sido identificados.
+
+Para além dos objetivos propostos, foi ainda apresentada uma prova de conceito que visa aumentar e melhorar a produtividade de trabalhos futuros de um tradutor de invariantes Alloy em \textit{queries} SPARQL. Este trabalho adicional foi inspirado no facto de o CLAV ser um projeto que já se encontra em produção e não teve a capacidade de adotar os métodos apresentados ao longo deste relatório mais cedo.
+
+O modelo formal apresentado em anexo consiste apenas na formalização da Lista Consolidada e das relações presentes na classificação e avaliação dos processos de negócio. Na realidade, o CLAV possui outros componentes complexos que irão interagir entre si e necessitam de alguma garantia de correção. Sendo assim, um trabalho futuro poderá consistir em formalizar o resto do modelo que diz respeito ao CLAV e assistir a sua implementação de forma correta antes que seja tarde demais! Outro plano futuro, poderá ser o de melhorar a ferramenta de tradução automática de invariantes, de forma a suportar funcionalidades mais complexas.
+
+Concluindo, apesar deste trabalho ter contribuído significativamente para melhorar a correção do modelo da Lista Consolidada, eliminar bastantes falhas e adicionar invariantes que não tinham sido considerados, proporcionou um ambiente de desenvolvimento melhor ao anterior, baseado numa evolução incremental e não estudada do modelo, fornecendo a base para que o ciclo de verificação possa continuar e uma ferramenta (a de tradução) para que, num ambiente de produção, seja possível identificar de forma automática os erros de instância presentes
 
 %
 % ---- Bibliography ----
@@ -656,5 +663,617 @@ partilham, à partida, de uma representação base.
 %
 \bibliographystyle{splncs04}
 \bibliography{mybib}{}
+
+\newpage
+
+\begin{subappendices}
+\renewcommand{\thesection}{\Alph{section}}%
+% or try \arabic{section}
+
+\section{Modelo formal Alloy}
+
+\begin{lstlisting}[language=alloy, frame=single]
+open util/boolean
+open RelCalc
+
+/* Atributo Composto */
+abstract sig CriterioJustificacao {
+	critTemLegAssoc: set Legislacao,
+	critTemProcRel: set Classe_N3
+}
+  sig CriterioJustificacaoComplementaridadeInfo extends CriterioJustificacao {}
+  sig CriterioJustificacaoDensidadeInfo extends CriterioJustificacao {}
+  sig CriterioJustificacaoGestionario extends CriterioJustificacao {}
+  sig CriterioJustificacaoLegal extends CriterioJustificacao {}
+  sig CriterioJustificacaoUtilidadeAdministrativa extends CriterioJustificacao {}
+
+abstract sig DestinoFinal {
+	temJustificacao: one Justificacao
+}
+sig Eliminacao, Conservacao, NE extends DestinoFinal {} /* dfValor :: DF -> String */
+
+sig ExemploNotaAplicacao {}
+
+/* Justificacao */
+abstract sig Justificacao {
+	temCriterio: some CriterioJustificacao
+}
+  sig JustificacaoDF extends Justificacao {}
+  sig JustificacaoPCA extends Justificacao {}
+/* ----- */
+
+sig NotaAplicacao {
+	naPertenceClasse: one Classe
+}
+
+sig NotaExclusao {
+	nePertenceClasse: one Classe,
+	usarClasse: set Classe
+}
+
+sig PCA {
+	temJustificacao: one Justificacao,
+	valor: one Int
+}
+/* ----- */
+
+/* Classe */
+abstract sig Classe {
+	pertenceLC: lone ListaConsolidada,
+	temNotaAplicacao: set NotaAplicacao,
+	temNotaExclusao: set NotaExclusao,
+	pertenceTS: lone TabelaSelecao,
+	temExemploNA: set ExemploNotaAplicacao
+}
+
+sig Classe_N1 extends Classe {
+	temFilho: set Classe_N2,
+}
+sig Classe_N2 extends Classe {
+	temPai: one Classe_N1,
+	temFilho: set Classe_N3,
+}
+
+sig Classe_N3 extends Classe {
+	temPai: one Classe_N2,
+	temDono: some EntidadeResponsavel, 
+	temFilho: set Classe_N4,
+	temTI: set TermoIndice,
+	/* temRelProc */
+    eAntecessorDe: lone Classe_N3,
+    eComplementarDe: set Classe_N3, 
+    eCruzadoCom: set Classe_N3,
+    eSinteseDe: set Classe_N3,
+    eSintetizadoPor: set Classe_N3,
+    eSucessorDe: lone Classe_N3,
+    eSuplementoDe: set Classe_N3,
+    eSuplementoPara: set Classe_N3,
+	/* ----- */
+    /* temParticipante */
+    temParticipanteComunicador: set EntidadeResponsavel,
+    temParticipanteIniciador: set EntidadeResponsavel,
+    temParticipanteApreciador: set EntidadeResponsavel,
+    temParticipanteDecisor: set EntidadeResponsavel,
+    temParticipanteAssessor: set EntidadeResponsavel,
+    temParticipanteExecutor: set EntidadeResponsavel,
+	/* ----- */
+    temLegislacao: set Legislacao,
+    temDF: lone DestinoFinal,
+    temPCA: lone PCA,
+
+	/* Relacoes de atributo */
+	processoTransversal: one Bool
+	/* ----- */
+}
+
+sig Classe_N4 extends Classe {
+	temPai: one Classe_N3,
+	temTI: set TermoIndice, // Partilha entre irmaos -- VER CAMPOS
+	/* temRelProc */
+	eSinteseDe: set Classe_N4,
+    eSintetizadoPor: set Classe_N4,
+	/* ----- */
+	temDF: one DestinoFinal,
+	temPCA: one PCA
+}
+
+/* Factos Classe_N4 */
+fact classe_n4 {
+	no Classe_N4.temNotaAplicacao
+	no Classe_N4.temNotaExclusao
+	no Classe_N4.temExemploNA
+}
+/* ----- */
+
+abstract sig EntidadeResponsavel {
+	eDonoProcesso: set Classe_N3,
+ 	/* participaEm */
+    participaEmComunicando: set Classe_N3,
+    participaEmIniciando: set Classe_N3,
+    participaEmApreciando: set Classe_N3,
+    participaEmDecidindo: set Classe_N3,
+    participaEmAssessorando: set Classe_N3,
+    participaEmExecutando: set Classe_N3,
+	/* ----- */
+}
+
+sig Entidade extends EntidadeResponsavel {
+	pertenceTipologiaEnt: set TipologiaEntidade
+}
+
+sig TipologiaEntidade extends EntidadeResponsavel {
+	contemEntidade: some Entidade
+}
+
+sig Legislacao {
+	temEntidadeResponsavel: set EntidadeResponsavel
+}
+
+/* ReferencialClassificativo */
+abstract sig ReferencialClassificativo {
+	temClasse: set Classe
+}
+sig ListaConsolidada extends ReferencialClassificativo {}
+sig TabelaSelecao extends ReferencialClassificativo {}
+/* ----- */
+
+sig TermoIndice {
+	estaAssocClasse: one Classe_N3 + Classe_N4
+}
+
+/* FACTOS */
+fact {
+	/* Relacoes inversas */
+	-- pertenceLC
+	pertenceLC in ~temClasse
+
+	-- temFilho
+	~(Classe_N1<:temFilho) = (Classe_N2<:temPai)
+	~(Classe_N2<:temFilho) = (Classe_N3<:temPai)
+	~(Classe_N3<:temFilho) = (Classe_N4<:temPai)
+
+	-- temNotaAplicacao
+	~temNotaAplicacao in naPertenceClasse
+
+	-- temNotaExclusao
+	~temNotaExclusao in nePertenceClasse
+
+	-- temDono
+	~eDonoProcesso in temDono
+
+	-- temTI
+	~(Classe_N3<:temTI) in estaAssocClasse
+	~(Classe_N4<:temTI) in estaAssocClasse
+	
+	-- temRelProc
+	  -- eAntecessorDe/eSucessorDe
+	  ~eAntecessorDe = eSucessorDe
+      -- eSinteseDe/eSintetizadoPor
+	  ~(Classe_N3<:eSinteseDe) = Classe_N3<:eSintetizadoPor
+	  ~(Classe_N4<:eSinteseDe) = Classe_N4<:eSintetizadoPor
+      -- eSuplementoDe/eSuplementoPara
+	  ~eSuplementoDe = eSuplementoPara
+
+	-- temParticipante
+      -- temParticipanteComunicador
+	  ~participaEmComunicando in temParticipanteComunicador
+      -- temParticipanteIniciador
+      ~participaEmIniciando in temParticipanteIniciador
+      -- temParticipanteApreciador
+      ~participaEmApreciando in temParticipanteApreciador
+      -- temParticipanteDecisor
+      ~participaEmDecidindo in temParticipanteDecisor
+      -- temParticipanteAssessor
+      ~participaEmAssessorando in temParticipanteAssessor
+      -- temParticipanteExecutor
+      ~participaEmExecutando in temParticipanteExecutor
+
+	-- temLegislacao VER NO FUTURO
+
+	-- contemEntidade
+	~contemEntidade = pertenceTipologiaEnt
+	/* ----- */
+}
+
+/* INVARIANTES */
+
+/* Se uma Classe_N1 pertence a uma LC/TS, consequentemente os seus filhos,netos,etc..
+   tambem tem de pertencer
+*/
+pred inv1 {
+	all c:Classe_N1,lc:ListaConsolidada | lc = c.pertenceLC =>
+		(all cf:c.temFilho | lc = cf.pertenceLC) and
+		(all cf:c.temFilho.temFilho | lc = cf.pertenceLC) and
+	    (all cf:c.temFilho.temFilho.temFilho | lc = cf.pertenceLC)
+
+	all c:Classe_N1,ts:TabelaSelecao | ts = c.pertenceTS =>
+		(all cf:c.temFilho | ts = cf.pertenceTS) and
+		(all cf:c.temFilho.temFilho | ts = cf.pertenceTS) and
+	    (all cf:c.temFilho.temFilho.temFilho | ts = cf.pertenceTS)
+}
+
+/* Se uma Classe_N1 nao pertence a uma LC/TS, consequentemente os seus filhos,netos,etc.. tambem nao pertencem */
+pred inv2 {
+	all c:Classe_N1 | no c.pertenceLC =>
+		(all cf:c.temFilho | no cf.pertenceLC) and
+		(all cf:c.temFilho.temFilho | no cf.pertenceLC) and
+	    (all cf:c.temFilho.temFilho.temFilho | no cf.pertenceLC)
+
+	all c:Classe_N1 | no c.pertenceTS =>
+		(all cf:c.temFilho | no cf.pertenceTS) and
+		(all cf:c.temFilho.temFilho | no cf.pertenceTS) and
+	    (all cf:c.temFilho.temFilho.temFilho | no cf.pertenceTS)
+}
+
+/* As relacoes temDF e temPCA, nao existem numa classe 3 se esta tiver filhos. */
+pred inv3 {
+	all c:Classe_N3 | some c.temFilho => no c.temDF and no c.temPCA
+}
+
+/* As relacoes temDF e temPCA, existem numa classe 3 se esta nao tiver filhos. */
+pred inv4 {
+	all c:Classe_N3 | no c.temFilho => one c.temDF and one c.temPCA
+}
+
+/* Nas classes 3 com desdobramento */
+
+/* Os 4os niveis herdam as legislacoes existentes no 3o nivel (subconjunto), quer para o PCA quer para o DF. */
+pred inv5 {
+	all c:Classe_N3 | some c.temFilho => {
+	(c.temFilho.temPCA.temJustificacao.temCriterio.critTemLegAssoc 
+	 + c.temFilho.temDF.temJustificacao.temCriterio.critTemLegAssoc) in c.temLegislacao
+	}
+}
+
+/* Apenas se desdobram devido a um PCA distinto ou DF distinto */
+pred inv6 {
+	all c:Classe_N3 | #c.temFilho > 1 => (#c.temFilho.temDF > 1) or 
+					 (#c.temFilho.temPCA > 1 and (all p1,p2:c.temFilho.temPCA | p1.valor != p2.valor))
+}
+
+/* Caso o motivo de desdobramento seja PCA distinto:
+     - Caso o DF seja distinto tem que haver uma relacao de sintese entre as classes 4 filhas
+*/
+pred inv7 {
+	all c:Classe_N3 | #c.temFilho > 1
+                  and (#c.temFilho.temPCA > 1)
+                  and (#c.temFilho.temDF > 1)
+                    => (all disj c1,c2:c.temFilho |
+                      c1->c2 in eSinteseDe <=>
+                      (c1.temDF in Conservacao) and (c2.temDF in Eliminacao))
+}
+
+
+/* Caso o motivo de desdobramento seja DF distinto:
+     - Tem que haver uma relacao de sintese entre as classes 4 filhas
+	 - O PCA e igual
+*/
+pred inv8 {
+	all c:Classe_N3 | #c.temFilho > 1 and 
+					  (c.temFilho.temDF not in Eliminacao) and
+					  (c.temFilho.temDF not in Conservacao) =>
+					  one c.temFilho.temPCA.valor and
+					  (all disj c1,c2:c.temFilho {
+ 					  	(c1.temDF in Conservacao) and (c2.temDF in Eliminacao) =>
+					  	c1->c2 in eSinteseDe
+					  })
+}
+
+/* Os termos de indice vao para os 4os niveis */
+pred inv9 {
+	all c:Classe_N3,t:c.temTI | some c.temFilho => t in c.temFilho.temTI
+}
+
+/* Se um PN (Classe 3) for complementar de outro que se desdobra ao 4o nivel, e necessario, 
+   com base no criterio de complementaridade informacional, a relacao manter-se ao 3o nivel. 
+   Pelo menos um dos 4os niveis deve ser de conservacao. */
+pred inv10 {
+	all disj c1,c2:Classe_N3 | c1 in c2.eComplementarDe and some c2.temFilho => some c3:c2.temFilho | c3.temDF in Conservacao
+}
+
+/* Um processo so tem participantes se for transveral */
+pred inv11 {
+	all c:Classe_N3 | False = c.processoTransversal => no 
+		(c.temParticipanteComunicador 
+		+ c.temParticipanteIniciador
+		+ c.temParticipanteApreciador
+		+ c.temParticipanteDecisor
+    	+ c.temParticipanteAssessor
+    	+ c.temParticipanteExecutor)
+}
+
+/* As relacoes eComplementarDe e eCruzadoCom sao simetricas. */
+pred inv12 {
+	Symmetric[eComplementarDe]
+	Symmetric[eCruzadoCom]
+}
+
+/* Na relacao temRelProc um PN nao se relaciona com ele proprio */
+pred inv13 {
+    all c:Classe_N3 | c->c not in eAntecessorDe
+    all c:Classe_N3 | c->c not in eComplementarDe
+    all c:Classe_N3 | c->c not in eCruzadoCom
+    all c:Classe_N3 | c->c not in eSinteseDe
+    all c:Classe_N3 | c->c not in eSintetizadoPor
+    all c:Classe_N4 | c->c not in eSinteseDe
+    all c:Classe_N4 | c->c not in eSintetizadoPor
+    all c:Classe_N3 | c->c not in eSucessorDe
+    all c:Classe_N3 | c->c not in eSuplementoDe
+    all c:Classe_N3 | c->c not in eSuplementoPara
+}
+
+/* As relacoes eSinteseDe, eSucessorDe e eSuplementoDe sao antimetricas. */
+pred inv14 {
+	Antisymmetric[Classe_N3<:eSinteseDe, Classe_N3]
+	Antisymmetric[Classe_N3<:eSintetizadoPor, Classe_N3]
+	Antisymmetric[Classe_N4<:eSinteseDe, Classe_N4]
+	Antisymmetric[Classe_N4<:eSintetizadoPor, Classe_N4]
+
+	Antisymmetric[eSucessorDe, Classe_N3]
+	Antisymmetric[eAntecessorDe, Classe_N3]
+
+	Antisymmetric[eSuplementoDe, Classe_N3]
+	Antisymmetric[eSuplementoPara, Classe_N3]
+}
+
+/* Um PN so pode ter uma relacao com outro PN */
+pred inv15 {
+	all c1,c2:Classe_N3 | c1->c2 in eAntecessorDe => c1->c2 not in
+		eComplementarDe + eCruzadoCom + eSinteseDe + eSintetizadoPor + eSucessorDe + eSuplementoDe + eSuplementoPara
+	or
+	all c1,c2:Classe_N3 | c1->c2 in eComplementarDe => c1->c2 not in
+		eAntecessorDe + eCruzadoCom + eSinteseDe + eSintetizadoPor + eSucessorDe + eSuplementoDe + eSuplementoPara
+	or
+	all c1,c2:Classe_N3 | c1->c2 in eCruzadoCom => c1->c2 not in
+		eAntecessorDe + eComplementarDe + eSinteseDe + eSintetizadoPor + eSucessorDe + eSuplementoDe + eSuplementoPara
+	or
+	all c1,c2:Classe_N3 | c1->c2 in eSinteseDe => c1->c2 not in
+	 	eAntecessorDe + eComplementarDe + eCruzadoCom + eSintetizadoPor + eSucessorDe + eSuplementoDe + eSuplementoPara
+	or
+	all c1,c2:Classe_N3 | c1->c2 in eSintetizadoPor => c1->c2 not in
+		eAntecessorDe + eComplementarDe + eCruzadoCom + eSinteseDe + eSucessorDe + eSuplementoDe + eSuplementoPara
+	or
+	all c1,c2:Classe_N3 | c1->c2 in eSucessorDe => c1->c2 not in
+		eAntecessorDe + eComplementarDe + eCruzadoCom + eSinteseDe + eSintetizadoPor + eSuplementoDe + eSuplementoPara
+	or
+	all c1,c2:Classe_N3 | c1->c2 in eSuplementoDe => c1->c2 not in
+		eAntecessorDe + eComplementarDe + eCruzadoCom + eSinteseDe + eSintetizadoPor + eSucessorDe + eSuplementoPara
+	or
+	all c1,c2:Classe_N3 | c1->c2 in eSuplementoPara => c1->c2 not in
+		eAntecessorDe + eComplementarDe + eCruzadoCom + eSinteseDe + eSintetizadoPor + eSucessorDe + eSuplementoDe
+}
+
+/* Se um PN se desdobra em 4os niveis os Termos de Indice passam para os filhos */
+pred inv16 {
+	all c:Classe_N3 | some c.temFilho => no c.temTI
+}
+
+/* Os Termos de Indice de um PN nao podem existir em mais nenhuma classe 3 */
+pred inv17 {
+	all disj c1,c2:Classe_N3,ti:TermoIndice | ti in c1.temTI => ti not in c2.temTI
+}
+
+/* 2 DFs nao podem ter a mesma instancia de Justificacao */
+pred inv18 {
+	all disj d1,d2:DestinoFinal | d1.temJustificacao != d2.temJustificacao
+}
+
+/* 2 DFs nao podem ter a mesma instancia de Justificacao */
+pred inv19 {
+	all disj pca1,pca2:PCA | pca1.temJustificacao != pca2.temJustificacao
+}
+
+/* 2 PNs nao podem ter a mesma instancia de DF */
+pred inv20 {
+	all disj c1,c2:Classe_N3 {
+		c1.temDF != c2.temDF
+	}
+	all disj c1,c2:Classe_N4 {
+		c1.temDF != c2.temDF
+	}
+	all disj c1:Classe_N3,c2:Classe_N4 {
+		c1.temDF != c2.temDF
+	}
+}
+
+/* 2 PNs nao podem ter a mesma instancia de PCA */
+pred inv21 {
+	all disj c1,c2:Classe_N3 {
+		c1.temPCA != c2.temPCA
+	}
+	all disj c1,c2:Classe_N4 {
+		c1.temPCA != c2.temPCA
+	}
+	all disj c1:Classe_N3,c2:Classe_N4 {
+		c1.temPCA != c2.temPCA
+	}
+}
+
+/* Cada Justificacao tem no maximo 3 CriterioJustificacao diferentes */ 
+pred inv22 {
+	all j:Justificacao | #j.temCriterio <= 3
+}
+
+/* 2 Justificacoes nao podem ter a mesma instancia de CriterioJustificacao */
+pred inv23 {
+	all disj j1,j2:Justificacao | all c:CriterioJustificacao | c in j1.temCriterio => c not in j2.temCriterio
+}
+
+/* 2 Classes nao podem ter a mesma instancia NotaAplicacao
+   2 Classes nao podem ter a mesma instancia NotaExclusao
+   2 Classes nao podem ter a mesma instancia ExemploNotaAplicacao
+*/
+pred inv24 {
+	all disj c1,c2:Classe | all n:NotaAplicacao | n in c1.temNotaAplicacao => n not in c2.temNotaAplicacao
+	all disj c1,c2:Classe | all n:NotaExclusao | n in c1.temNotaExclusao => n not in c2.temNotaExclusao
+	all disj c1,c2:Classe | all n:ExemploNotaAplicacao | n in c1.temExemploNA => n not in c2.temExemploNA
+}
+
+/* 2 Classes N3 nao podem ter os mesmos filhos */
+pred inv25 {
+	all disj c1,c2:Classe_N3 | all c3:Classe_N4 | c3 in c1.temFilho => c3 not in c2.temFilho
+}
+
+/* 2 Classe_N3 nao podem ter o mesmo TI */
+pred inv26 {
+	all disj c1,c2:Classe_N3 | all t:TermoIndice | t in c1.temTI => t not in c2.temTI
+}
+
+/* UM DF, na sua justificacao, apenas deve ter uma instancia de JustificacaoDF */
+pred inv27 {
+	all df:DestinoFinal | df.temJustificacao in JustificacaoDF
+}
+
+/* UM PCA, na sua justificacao, apenas deve ter uma instancia de JustificacaoPCA */
+pred inv28 {
+	all pca:PCA | pca.temJustificacao in JustificacaoPCA
+}
+
+/* Quando o PN (sem filhos) em causa `eSuplementoPara` outro, 
+   deve ser acrescentado um criterio de utilidade administrativa na justificacao do respetivo PCA
+*/
+pred inv29 {
+	all c:Classe_N3 | no c.temFilho and some c.eSuplementoPara => one crit:CriterioJustificacaoUtilidadeAdministrativa {
+		crit in c.temPCA.temJustificacao.temCriterio and crit.critTemProcRel = c.eSuplementoPara
+	}
+}
+
+/* Um DF, na sua justificacao, devera conter apenas criterios de densidade informacional, complementaridade informacional e legal */
+pred inv30 {
+	all df:DestinoFinal | all crit:df.temJustificacao.temCriterio {
+		(crit in CriterioJustificacaoDensidadeInfo) or
+		(crit in CriterioJustificacaoComplementaridadeInfo) or
+		(crit in CriterioJustificacaoLegal)
+	}
+}
+
+/* Um PCA, na sua justificacao, devera conter apenas criterios gestionarios, utilidade administrativa e legal */
+pred inv31 {
+	all pca:PCA | all crit:pca.temJustificacao.temCriterio {
+		(crit in CriterioJustificacaoGestionario) or
+		(crit in CriterioJustificacaoUtilidadeAdministrativa) or
+		(crit in CriterioJustificacaoLegal)
+	}
+}
+
+/* 
+Se um PN e (por ordem de prioridade):
+    - eComplementarDe   -> DF e de conservacao
+    - eSinteseDe        -> DF e de conservacao
+    - eSintetizadoPor   -> DF e de eliminacao
+    - nenhuma das acima -> DF e NE (Nao especificado)
+*/
+pred inv32 {
+	all c:Classe_N3 | no c.temFilho => {
+		some c.eComplementarDe => c.temDF in Conservacao
+	}
+	all c:Classe_N3 | no c.temFilho => {
+		!(some c.eComplementarDe) and (some c.eSinteseDe) => c.temDF in Conservacao
+	}
+	all c:Classe_N3 | no c.temFilho => {
+		!(some c.eComplementarDe) and !(some c.eSinteseDe) and (some c.eSintetizadoPor) => c.temDF in Eliminacao
+	}
+	all c:Classe_N3 | no c.temFilho => {
+		!(some c.eComplementarDe) and !(some c.eSinteseDe) and !(some c.eSintetizadoPor) => c.temDF in NE
+	}
+}
+
+/* Quando o PN (com filhos) em causa `eSuplementoPara` outro, 
+   deve ser acrescentado um criterio de utilidade administrativa na 
+   justificacao PCA dos filhos em que os processos relacionados com
+   o criterio podem ser distintos. 
+*/
+pred inv33 {
+	all c:Classe_N3 | some c.temFilho and some c.eSuplementoPara => 
+		all c2:c.temFilho {
+			one crit:CriterioJustificacaoUtilidadeAdministrativa {
+				crit in c2.temPCA.temJustificacao.temCriterio
+				crit.critTemProcRel in c.eSuplementoPara
+			}
+		}
+}
+
+/* Todos os processos relacionados (sem filhos) por uma relacao de sintese deverao
+   estar relacionados com o criterio de densidade informacional da
+   respetiva justificacao.
+*/
+pred inv34 {
+	all c:Classe_N3 | no c.temFilho and (some c.eSinteseDe) => one crit:CriterioJustificacaoDensidadeInfo {
+		crit in c.temDF.temJustificacao.temCriterio and crit.critTemProcRel = c.eSinteseDe
+	}
+	all c:Classe_N3 | no c.temFilho and (some c.eSintetizadoPor) => one crit:CriterioJustificacaoDensidadeInfo {
+		crit in c.temDF.temJustificacao.temCriterio and crit.critTemProcRel = c.eSintetizadoPor
+	}
+}
+
+/* Todos os processos relacionados (com filhos) por uma relacao de sintese deverao
+   estar relacionados com o criterio de densidade informacional da
+   respetiva justificacao.
+*/
+pred inv35 {
+	all c:Classe_N3 | some c.temFilho and (some c.eSinteseDe) => 
+		all c2:c.temFilho {
+			one crit:CriterioJustificacaoDensidadeInfo {
+				crit in c2.temDF.temJustificacao.temCriterio and crit.critTemProcRel = c.eSinteseDe
+			}
+		}
+	all c:Classe_N3 | some c.temFilho and (some c.eSintetizadoPor) => 
+		all c2:c.temFilho {
+			one crit:CriterioJustificacaoDensidadeInfo {
+				crit in c2.temDF.temJustificacao.temCriterio and crit.critTemProcRel = c.eSintetizadoPor
+			}
+		}
+}
+
+/*
+	Todos os processos relacionados (sem filhos) pela relacao eComplementarDe,
+	devem estar relacionados com o criterio de complementaridade
+	informacional da respetiva justificacao.
+*/
+pred inv36 {
+	all c:Classe_N3 | no c.temFilho and (some c.eComplementarDe) => one crit: CriterioJustificacaoComplementaridadeInfo {
+		crit in c.temDF.temJustificacao.temCriterio and crit.critTemProcRel = c.eComplementarDe
+	}
+	all c:Classe_N3 | no c.temFilho and (some eComplementarDe.c) => one crit: CriterioJustificacaoComplementaridadeInfo {
+		crit in c.temDF.temJustificacao.temCriterio and crit.critTemProcRel = eComplementarDe.c
+	}
+}
+
+/*
+	Todos os processos relacionados (com filhos) pela relacao eComplementarDe,
+	os filhos devem estar relacionados com o criterio de complementaridade
+	informacional da respetiva justificacao.
+*/
+pred inv37 {
+	all c:Classe_N3 | some c.temFilho and (some c.eComplementarDe) => 
+		all c2:c.temFilho {
+			one crit: CriterioJustificacaoComplementaridadeInfo {
+				crit in c2.temDF.temJustificacao.temCriterio and crit.critTemProcRel = c.eComplementarDe
+			}
+		}
+	all c:Classe_N3 | some c.temFilho and (some eComplementarDe.c) => 
+		all c2:c.temFilho {
+			one crit: CriterioJustificacaoComplementaridadeInfo {
+				crit in c2.temDF.temJustificacao.temCriterio and crit.critTemProcRel = eComplementarDe.c
+			}
+		}
+}
+
+/*
+	Cada justificacao tem no maximo 1 Criterio de cada tipo.
+*/
+pred inv38 {
+	all j:Justificacao {
+		lone crit1:CriterioJustificacaoComplementaridadeInfo | crit1 in j.temCriterio
+  		lone crit2:CriterioJustificacaoDensidadeInfo | crit2 in j.temCriterio
+  		lone crit3:CriterioJustificacaoGestionario | crit3 in j.temCriterio
+  		lone crit4:CriterioJustificacaoLegal | crit4 in j.temCriterio
+  		lone crit5:CriterioJustificacaoUtilidadeAdministrativa | crit5 in j.temCriterio
+	}
+}
+\end{lstlisting}{}
+
+\end{subappendices}
+
 
 \end{document}
