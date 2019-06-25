@@ -43,7 +43,7 @@
 Gonçalo Duarte}
 
 %
-\authorrunning{A. et al.}
+\authorrunning{Armando and Gonçalo}
 % First names are abbreviated in the running head.
 % If there are more than two authors, 'et al.' is used.
 %
@@ -70,7 +70,7 @@ Deste modo, no contexto da unidade curricular de Laboratórios em Engenharia Inf
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\linewidth]{metamodel.pdf}
+\includegraphics[width=0.6\linewidth]{metamodel2.pdf}
 \caption{Meta-modelo simplificado}
 \label{metamodel}
 \end{figure}
@@ -127,7 +127,7 @@ Nesta secção será abordada a especificação formal do CLAV. Será introduzid
 
 Dentro do contexto do CLAV podemos encontrar frases do género \textit{"A gestão de utentes é uma subfunção da prestação de cuidados de saúde"}, \textit{"O processo de referenciação de utentes para consultas é cruzado com o processo de registo nacional de utentes"} ou \textit{"Se um processo é complementar de outro, então o seu destino final é de conservação"}. Estas expressões podem ser interpretadas como relações tipadas entre objetos.
 
-As relações, como as frases a cima, já existem na matemática há vários anos e possuem uma notação própria capaz de as exprimir. Em geral, a notação (infixa) \textit{b R a}, onde \textit{a} e \textit{b} são os objetos e \textit{R} a relação, é a que expressa mais naturalmente as relações. Esta notação aplica-se também ao uso da voz passiva, que expressa a relação inversa de \textit{R}, denotada por \textit{Rº}, onde \textit{b R a} significa o mesmo que \textit{a Rº b}. Por exemplo, \textit{é síntese deº = é sintetizado por}.\label{rel_inv}
+As relações, como as frases acima, já existem na matemática há vários anos e possuem uma notação própria capaz de as exprimir. Em geral, a notação (infixa) \textit{b R a}, onde \textit{a} e \textit{b} são os objetos e \textit{R} a relação, é a que expressa mais naturalmente as relações. Esta notação aplica-se também ao uso da voz passiva, que expressa a relação inversa de \textit{R}, denotada por \textit{Rº}, onde \textit{b R a} significa o mesmo que \textit{a Rº b}. Por exemplo, \textit{é síntese deº = é sintetizado por}.\label{rel_inv}
 
 Também é importante observar que relações do género \textit{R = é o pai de}, são relações em que quando conhecido, o pai (p. ex. de uma classe) é único. Relações com esta propriedade são referidas como \textit{simples} e satisfazem a propriedade
 
@@ -317,13 +317,13 @@ As restrições mais complexas envolvem são as que envolvem as endo-relações 
     \begin{equation}
     \label{inv-3-4}
     \begin{tikzcd}
-                                                                                                                                                                                           &  &            & DF \arrow[swap]{ld}{temDF}                                       \\
-Classe\_N4 \arrow{rr}{temFilho34} \arrow[bend left]{rrru}{temFilho34\backslash \neg temDF} \arrow[swap, bend right]{rrrd}{temFilho34\backslash \neg temPCA} \arrow[swap, bend right]{rrr}{R} &  & Classe\_N3 & DF \times PCA \arrow[swap]{u}{\pi_1} \arrow{d}{\pi_2} \\
-                                                                                                                                                                                           &  &            & PCA \arrow{lu}{temPCA}                                     
-\end{tikzcd}
+               &  &                                       & DF \arrow{d}{i_1} \arrow[swap]{ld}{temDF}   \\
+Classe\_N4 &  & Classe\_N3 \arrow[swap]{ll}{temFilho34º} & DF + PCA \arrow[bend left]{lll}{R\ = \ temFilho34º \circ [temDF, temPCA]}       \\
+           &  &                                       & PCA \arrow[swap]{u}{i_2} \arrow{lu}{temPCA}
+    \end{tikzcd}
     \end{equation}{}
     \begin{equation*}
-        R = \langle (temFilho34\backslash \neg temDF), (temFilho34\backslash \neg temPCA) \rangle
+        R = \perp
     \end{equation*}{}
     
     \item Um PN só pode ter uma (endo) relação com outro PN:
@@ -457,7 +457,7 @@ all c:Classe_N3 | no c.temFilho => {
 \section{Tradução de \textit{queries} SPARQL}
 \label{SecQueries}
 
-Um modelo formal em Alloy permite raciocinar, utilizando cálculo relacionar e
+Um modelo formal em Alloy permite raciocinar, utilizando cálculo relacional e
 métodos matemáticos, sobre o problema e, tirando partido do \textit{model
 checker}, eliminar erros de conceção ingénuos ou que possam ter passado
 despercebidos. O modelo apresentado nas secções anteriores é apenas um modelo
@@ -638,7 +638,7 @@ partilham, à partida, de uma representação base.
 
 Durante o desenvolvimento do projeto foram surgindo algumas dificuldades que impactaram na produtividade e no progresso do trabalho. Apesar dos aspetos negativos associados às dificuldades encontradas, nem sempre a sua existência foi vista como algo mau.
 
-O facto da documentação do projeto do CLAV, na fase inicial, ter estado espalhada, desorganizada e desatualizada afetou negativamente o progresso do trabalho uma vez que, foi necessário agrupar toda a informação relevante e organiza-la, de forma a facilitar as fases de desenvolvimento futuras. Alguns dos invariantes identificados eram ambíguos, característica da linguagem natural onde foram especificados. e apesar de este facto dificultar a interpretação dos mesmos, a aplicação de métodos rigorosos contribuiu para o refinamento destes.
+O facto da documentação do projeto do CLAV, na fase inicial, ter estado espalhada, desorganizada e desatualizada afetou negativamente o progresso do trabalho uma vez que, foi necessário agrupar toda a informação relevante e organiza-la, de forma a facilitar as fases de desenvolvimento futuras. Alguns dos invariantes identificados eram ambíguos, característica da linguagem natural onde foram especificados, e apesar de este facto dificultar a interpretação dos mesmos, a aplicação de métodos rigorosos contribuiu para o refinamento destes.
 
 Outra dificuldade que também contribuiu significativamente para o resultado final deste trabalho foram as restrições de tempo. Uma vez que este trabalho foi realizado em paralelo com mais quatro unidades curriculares, houve um período de estagnação (época de exames) onde os autores não tiveram tanta capacidade de trabalho.
 
@@ -648,7 +648,9 @@ Observando o trabalho no seu estado final, é possível afirmar que este foi con
 
 Para além dos objetivos propostos, foi ainda apresentada uma prova de conceito que visa aumentar e melhorar a produtividade de trabalhos futuros de um tradutor de invariantes Alloy em \textit{queries} SPARQL. Este trabalho adicional foi inspirado no facto de o CLAV ser um projeto que já se encontra em produção e não teve a capacidade de adotar os métodos apresentados ao longo deste relatório mais cedo.
 
-O modelo formal apresentado em anexo consiste apenas na formalização da Lista Consolidada e das relações presentes na classificação e avaliação dos processos de negócio. Na realidade, o CLAV possui outros componentes complexos que irão interagir entre si e necessitam de alguma garantia de correção. Sendo assim, um trabalho futuro poderá consistir em formalizar o resto do modelo que diz respeito ao CLAV e assistir a sua implementação de forma correta antes que seja tarde demais! Outro plano futuro, poderá ser o de melhorar a ferramenta de tradução automática de invariantes, de forma a suportar funcionalidades mais complexas.
+O modelo formal apresentado em anexo consiste apenas na formalização da Lista Consolidada e das relações presentes na classificação e avaliação dos processos de negócio. Na realidade, o CLAV possui outros componentes complexos que irão interagir entre si e necessitam de alguma garantia de correção. Sendo assim, um trabalho futuro poderá consistir em formalizar o resto do modelo que diz respeito ao CLAV e assistir a sua implementação de forma correta antes que seja tarde demais! 
+
+Outro plano futuro, poderá ser o de melhorar a ferramenta de tradução automática de invariantes, de forma a suportar funcionalidades mais complexas. É de salientar que já existe algum trabalho, bastante incompleto, relacionado com a reescrita de expressões OWL/DL\cite{q-trad} em SPARQL, levando em conta a semântica OWL e SPARQL. Este trabalho relacionado, apresenta algumas regras de reescrita formalizadas que poderão dar jeito implementar na prova de conceito (com alguns ajustes) uma vez que, a lógica descritiva possui uma semântica bastante semelhante à do Alloy.
 
 Concluindo, apesar deste trabalho ter contribuído significativamente para melhorar a correção do modelo da Lista Consolidada, eliminar bastantes falhas e adicionar invariantes que não tinham sido considerados, proporcionou um ambiente de desenvolvimento melhor ao anterior, baseado numa evolução incremental e não estudada do modelo, fornecendo a base para que o ciclo de verificação possa continuar e uma ferramenta (a de tradução) para que, num ambiente de produção, seja possível identificar de forma automática os erros de instância presentes
 
