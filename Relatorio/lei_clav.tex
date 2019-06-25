@@ -53,7 +53,7 @@ Gonçalo Duarte}
 %
 \begin{abstract}
 
-CLAV é uma plataforma que está a ser desenvolvida pelo Departamento de Informática da Universidade do Minho em parceria com a Direção Geral do Livro, Arquivos e Bibliotecas (DGLAB), e tem como objetivo a classificação e avaliação de todos os documentos que circulam pelas instituições públicas portuguesas. Neste momento existe um modelo do problema especificado em OWL (\textit{Ontology Web Language}), mas tem sofrido várias alterações no decorrer do último ano e não existiu tempo para estudar o impacto dessas mesmas alterações nas pré-condições e invariantes do modelo. Neste projeto, inserido na Unidade Curricular de Laboratórios em Engenharia Informática (LEI) do MIEI/UM, pretende-se formalizar o modelo de raíz assim como os seus invariantes e garantir a consistência dos mesmos, sendo capaz de detetar erros que, até agora, não tenham sido identificados.
+CLAV é uma plataforma que está a ser desenvolvida pela Direção Geral do Livro, Arquivos e Bibliotecas (DGLAB) em parceria técnica com o Departamento de Informática da Universidade do Minho, e tem como objetivo a classificação e avaliação de todos os documentos que circulam pelas instituições públicas portuguesas. Neste momento existe um modelo do problema especificado em OWL (\textit{Ontology Web Language}), mas tem sofrido várias alterações no decorrer do último ano e não existiu tempo para estudar o impacto dessas mesmas alterações nas pré-condições e invariantes do modelo. Neste projeto, inserido na Unidade Curricular de Laboratórios em Engenharia Informática (LEI) do MIEI/UM, pretende-se formalizar o modelo de raíz assim como os seus invariantes e garantir a consistência dos mesmos, sendo capaz de detetar erros que, até agora, não tenham sido identificados.
 
 \keywords{Administração Pública \and Métodos Formais \and Engenharia Informática \and Alloy Analyzer \and OWL.}
 \end{abstract}
@@ -216,7 +216,7 @@ Sendo assim, nesta secção e na próxima, apesar do domínio especificado ser m
 
 \subsubsection{Referencial Classificativo:}
 
-O Referencial Classificativo possui o conjunto de Listas Consolidadas e Tabelas de Seleção onde se encontram as diversas funções (classes de nível 1).
+O Referencial Classificativo possui a Lista Consolidada e o conjunto de Tabelas de Seleção onde se encontram todas as classes.
 
 \begin{equation*}
     ReferencialClassificativo = ListaConsolidada + TabelaSelecao
@@ -224,7 +224,7 @@ O Referencial Classificativo possui o conjunto de Listas Consolidadas e Tabelas 
 
 \subsubsection{Classes:}
 
-Como já foi referido existem 4 níveis de classes e, como veremos na secção abaixo dá-nos jeito especificá-las da seguinte maneira.
+Como já foi referido existem 4 níveis de classes e, como veremos na secção abaixo especificamo-las da seguinte maneira.
 
 \begin{equation*}
     Classes = Classe\_N1 + Classe\_N2 + Classe\_N3 + Classe\_N4
@@ -240,7 +240,7 @@ O Prazo de Conservação Administrativa é o simples tipo de dados:
 
 \subsubsection{Destino Final:}
 
-O Destino Final é passível de ser avaliado em um de três valores: \textit{Não Especificado (NE)}, \textit{Eliminação} (quando o processo de negócio tem o destino de ser eliminado) e \textit{Conservação} (quando o processo de negócio deve ser preservado). Apesar de apenas existirem estes 3 valores, foi necessário distingui-los em entidades individuais devido ao facto de cada instância de um DF estar relacionada com outras entidades. Sendo assim:
+O Destino Final é passível de ser avaliado em um de três valores: \textit{Não Especificado (NE)}, \textit{Eliminação} (quando a documentação associada ao processo de negócio é eliminada, uma vez terminado o PCA) e \textit{Conservação} (quando a documentação associada ao processo de negócio deve ser preservada, uma vez terminado o PCA). Apesar de apenas existirem estes 3 valores, foi necessário distingui-los em entidades individuais devido ao facto de cada instância de um DF estar relacionada com outras entidades. Sendo assim:
 
 \begin{equation*}
     DestinoFinal = NE + Eliminacao + Conservacao
@@ -248,7 +248,7 @@ O Destino Final é passível de ser avaliado em um de três valores: \textit{Nã
 
 \subsection{Relações envolvidas}
 
-Observando apenas as entidades definidas na secção anterior não é bem clara a existência de uma hierarquia nem é clara a existência do contexto de avaliação nas classes de nível 3. Isto deve-se ao facto de estas características apenas se evidenciarem ao analisar as relações envolvidas entre cada uma das entidades do domínio.
+Observando apenas as entidades definidas na secção anterior não é bem clara a existência de uma hierarquia nem é clara a existência das endo-relações que fazem parte do contexto de avaliação nas de nível 3. Isto deve-se ao facto de estas características apenas se evidenciarem ao analisar as relações envolvidas entre cada uma das entidades do domínio.
 
 É de realçar que foi feito um esforço em manter as nomenclaturas da ontologia original e devido a isso, muitas das relações inversas possuem nomes diferentes. No entanto, para efeitos de simplificação e leitura utilizaremos a notação apresentada em \ref{rel_inv} e as restrições de domínio/contradomínio serão esclarecidas no nome das relações.
 
@@ -265,7 +265,7 @@ Classe\_N4
 \end{tikzcd}
 \end{equation}
 
-A cima, nas relações da familia \textit{pertenceLC} o número associado a elas diz respeito ao nível da classe. Nas relações da família \textit{temFilho}\footnote{Na ontologia, a relação inversa é a \textit{temPai}}, o primeiro número diz respeito ao pai e o segundo ao filho. Sendo assim, com estas relações já é possível observar a cascata hierárquica das classes de processos da Administração Pública associadas a uma Lista Consolidada.
+Acima, nas relações da familia \textit{pertenceLC} o número associado a elas diz respeito ao nível da classe. Nas relações da família \textit{temFilho}\footnote{Na ontologia, a relação inversa é a \textit{temPai}}, o primeiro número diz respeito ao pai e o segundo ao filho. Sendo assim, com estas relações já é possível observar a cascata hierárquica das classes de processos da Administração Pública associadas a uma Lista Consolidada.
 
 Com esta representação gráfica podemos também concluir que o sentido do invariante \ref{eq-inv1} também se aplica às relações apresentadas, dando origem a mais dois diagramas semelhantes mas para as classes filho.
 
@@ -279,7 +279,7 @@ PCA \arrow{rru}{temPCA3} \arrow[swap, bend right]{rrrr}{temPCA4} &  & DestinoFin
 \end{tikzcd}
 \end{equation}
 
-As endo-relações que dizem respeito aos processos de negócio na figura a cima são as principais relações presentes no contexto de avaliação e que irão influenciar o resultado do Destino Final. As classes de nível 4 são casos particulares em que um PN se desdobra com um certo motivo. Nesses casos as decisões de avaliação passam para os filhos. Como podemos ver, é nos processos de negócio que se encontra uma maior densidade de relações e é também nestes que se encontra a parte mais complexa e crítica do problema e, devido a isto, a maior parte dos invariantes irá focar-se neste diagrama. É de salientar que esta figura omite entidades e relações também relevantes que lidam com legislação e critérios de justificação que poderão ser encontrados no modelo final em anexo.
+As endo-relações que dizem respeito aos processos de negócio na figura acima são as principais relações presentes no contexto de avaliação e que irão influenciar o resultado do Destino Final. As classes de nível 4 são casos particulares em que um PN se desdobra com um certo motivo. Nesses casos as decisões de avaliação passam para os filhos. Como podemos ver, é nos processos de negócio que se encontra uma maior densidade de relações e é também nestes que se encontra a parte mais complexa e crítica do problema e, devido a isto, a maior parte dos invariantes irá focar-se neste diagrama. É de salientar que esta figura omite entidades e relações também relevantes que lidam com legislação e critérios de justificação que poderão ser encontrados no modelo final em anexo.
 
 \subsection{Invariantes} \label{SubSecInv}
 
@@ -638,7 +638,7 @@ partilham, à partida, de uma representação base.
 
 Durante o desenvolvimento do projeto foram surgindo algumas dificuldades que impactaram na produtividade e no progresso do trabalho. Apesar dos aspetos negativos associados às dificuldades encontradas, nem sempre a sua existência foi vista como algo mau.
 
-O facto da documentação do projeto do CLAV, na fase inicial, ter estado espalhada, desorganizada e desatualizada afetou negativamente o progresso do trabalho uma vez que, foi necessário agrupar toda a informação relevante e organiza-la, de forma a facilitar as fases de desenvolvimento futuras. Alguns dos invariantes identificados eram ambíguos, característica da linguagem natural onde foram especificados, e apesar de este facto dificultar a interpretação dos mesmos, a aplicação de métodos rigorosos contribuiu para o refinamento destes.
+O facto da documentação do projeto do CLAV, na fase inicial, ter estado espalhada, desorganizada e desatualizada afetou negativamente o progresso do trabalho uma vez que, foi necessário agrupar toda a informação relevante e organizá-la, de forma a facilitar as fases de desenvolvimento futuras. Alguns dos invariantes identificados eram ambíguos, característica da linguagem natural onde foram especificados, e apesar de este facto dificultar a interpretação dos mesmos, a aplicação de métodos rigorosos contribuiu para o refinamento destes.
 
 Outra dificuldade que também contribuiu significativamente para o resultado final deste trabalho foram as restrições de tempo. Uma vez que este trabalho foi realizado em paralelo com mais quatro unidades curriculares, houve um período de estagnação (época de exames) onde os autores não tiveram tanta capacidade de trabalho.
 
@@ -671,6 +671,1069 @@ Concluindo, apesar deste trabalho ter contribuído significativamente para melho
 \begin{subappendices}
 \renewcommand{\thesection}{\Alph{section}}%
 % or try \arabic{section}
+
+\section{Invariantes}
+
+\hypertarget{uxedndice}{%
+\subsection{Índice}\label{uxedndice}}
+
+\begin{itemize}
+\tightlist
+\item
+  \protect\hyperlink{ux5cux25C3ux5cux25ADndice}{Índice}
+\item
+  \protect\hyperlink{invariantes}{Invariantes}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \protect\hyperlink{indice}{Indice}
+  \item
+    \protect\hyperlink{classes-de-1-nivel}{Classes
+    de 1º Nível}
+  \item
+    \protect\hyperlink{classes-de-2-nivel}{Classes
+    de 2º Nível}
+  \item
+    \protect\hyperlink{classes-de-3-nivel-com-desdobramento}{Classes
+    de 3º Nível com desdobramento.}
+  \item
+    \protect\hyperlink{invariantes-sobre-os-pns-classe-3}{Invariantes
+    sobre os PNs (Classe 3)}
+  \item
+    \protect\hyperlink{invariantes-sobre-a-relacaoo-suplementar-implicacoes-no-pca}{Invariantes
+    sobre a relação Suplementar: implicações no PCA}
+  \item
+    \protect\hyperlink{invariantes-sobre-a-relacao-sintese-implicacoes-no-df}{Invariantes
+    sobre a relação Síntese: implicações no DF}
+  \item
+    \protect\hyperlink{invariantes-sobre-a-relacao-complementar-implicacoes-no-df}{Invariantes
+    sobre a relação Complementar: implicações no DF}
+  \item
+    \protect\hyperlink{invariantes-sobre-o-df}{Invariantes sobre o DF}
+  \item
+    \protect\hyperlink{invariantes-sobre-o-pca}{Invariantes sobre o PCA}
+  \item
+    \protect\hyperlink{invariantes-sobre-os-termos-de-indice}{Invariantes
+    sobre os Termos de Índice}
+  \item
+    \protect\hyperlink{invariantes-das-relacoes-temrelproc}{Invariantes
+    das relações \texttt{temRelProc}}
+  \item
+    \protect\hyperlink{invariantes-sobre-as-justificacoes}{Invariantes
+    sobre as Justificações}
+  \end{itemize}
+\end{itemize}
+
+\hypertarget{invariantes}{%
+\subsection{Invariantes}\label{invariantes}}
+
+A numeração dos invariantes corresponde à numeração do Alloy.
+
+\hypertarget{indice}{%
+\subsubsection{Indice}\label{indice}}
+
+\begin{itemize}
+\tightlist
+\item
+  \protect\hyperlink{inv1}{inv1}
+\item
+  \protect\hyperlink{inv2}{inv2}
+\item
+  \protect\hyperlink{inv3}{inv3}
+\item
+  \protect\hyperlink{inv4}{inv4}
+\item
+  \protect\hyperlink{inv5}{inv5}
+\item
+  \protect\hyperlink{inv6}{inv6}
+\item
+  \protect\hyperlink{inv7}{inv7}
+\item
+  \protect\hyperlink{inv8}{inv8}
+\item
+  \protect\hyperlink{inv9}{inv9}
+\item
+  \protect\hyperlink{inv10}{inv10}
+\item
+  \protect\hyperlink{inv11}{inv11}
+\item
+  \protect\hyperlink{inv12}{inv12}
+\item
+  \protect\hyperlink{inv13}{inv13}
+\item
+  \protect\hyperlink{inv14}{inv14}
+\item
+  \protect\hyperlink{inv15}{inv15}
+\item
+  \protect\hyperlink{inv16}{inv16}
+\item
+  \protect\hyperlink{inv17}{inv17}
+\item
+  \protect\hyperlink{inv18}{inv18}
+\item
+  \protect\hyperlink{inv19}{inv19}
+\item
+  \protect\hyperlink{inv19}{inv20}
+\item
+  \protect\hyperlink{inv21}{inv21}
+\item
+  \protect\hyperlink{inv22}{inv22}
+\item
+  \protect\hyperlink{inv23}{inv23}
+\item
+  \protect\hyperlink{inv24}{inv24}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \protect\hyperlink{inv24-1}{inv24-1}
+  \item
+    \protect\hyperlink{inv24-2}{inv24-2}
+  \item
+    \protect\hyperlink{inv24-3}{inv24-3}
+  \end{itemize}
+\item
+  \protect\hyperlink{inv25}{inv25}
+\item
+  \protect\hyperlink{inv26}{inv26}
+\item
+  \protect\hyperlink{inv27}{inv27}
+\item
+  \protect\hyperlink{inv28}{inv28}
+\item
+  \protect\hyperlink{inv29}{inv29}
+\item
+  \protect\hyperlink{inv30}{inv30}
+\item
+  \protect\hyperlink{inv31}{inv31}
+\item
+  \protect\hyperlink{inv32}{inv32}
+\item
+  \protect\hyperlink{inv33}{inv33}
+\item
+  \protect\hyperlink{inv34}{inv34}
+\item
+  \protect\hyperlink{inv35}{inv35}
+\item
+  \protect\hyperlink{inv36}{inv36}
+\item
+  \protect\hyperlink{inv37}{inv37}
+\end{itemize}
+
+\hypertarget{classes-de-1-nivel}{%
+\subsubsection{Classes de 1º Nível}\label{classes-de-1uxba-nuxedvel}}
+
+\begin{itemize}
+\tightlist
+\item
+  \hypertarget{inv1}{\textbf{(inv1)}} Se uma Classe\_N1 pertence a uma LC/TS,
+  consequentemente os seus filhos, netos, etc.. tambem têm de pertencer.
+\end{itemize}
+
+\begin{lstlisting}[language=sparql, frame=single, basicstyle=\scriptsize]
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where { 
+    ?c1 rdf:type :Classe_N1 .
+    ?c1 :pertenceLC ?lc1 .
+    
+    ?c2 rdf:type :Classe_N2 .
+    ?c2 :temPai ?c1 .
+    ?c2 :pertenceLC ?lc2 .
+    
+    ?c3 rdf:type :Classe_N3 .
+    ?c3 :temPai ?c2 .
+    ?c3 :pertenceLC ?lc3 .
+    
+    ?c4 rdf:type :Classe_N4 .
+    ?c4 :temPai ?c3 .
+    ?c4 :pertenceLC ?lc4 .
+    
+    FILTER (
+        ?c1 != ?c2 
+        && ?c2 != ?c3
+        && ?c3 != ?c4
+        && (?lc1 != ?lc2
+            || ?lc2 != ?lc3
+            || ?lc3 != ?lc4)
+    )
+    
+}
+\end{lstlisting}
+
+\begin{itemize}
+\tightlist
+\item
+  \hypertarget{inv2}{\textbf{(inv2)}} Se uma Classe\_N1 não pertence a uma LC/TS,
+  consequentemente os seus filhos, netos, etc.. tambem não pertencem.
+\end{itemize}
+
+\begin{lstlisting}[language=sparql, frame=single, basicstyle=\scriptsize]
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where { 
+    ?c1 rdf:type :Classe_N1 .
+    
+    minus {
+        ?c1 :pertenceLC ?lc1 .
+    }
+    
+    ?c2 rdf:type :Classe_N2 .
+    ?c2 :temPai ?c1 .
+    
+    ?c3 rdf:type :Classe_N3 .
+    ?c3 :temPai ?c2 .
+    
+    ?c4 rdf:type :Classe_N4 .
+    ?c4 :temPai ?c3 .
+    
+    FILTER (
+      ?c1 != ?c2 
+      && ?c2 != ?c3
+      && ?c3 != ?c4 &&
+      (EXISTS { ?c2 :pertenceLC ?lc2 . }
+      || EXISTS { ?c3 :pertenceLC ?lc3 . }
+      || EXISTS { ?c4 :pertenceLC ?lc4 . })
+    )
+    
+}
+\end{lstlisting}
+
+\begin{itemize}
+\tightlist
+\item
+  \hypertarget{inv24-1}{\textbf{(inv24-1)}} 2 Classe\_N1 nao podem ter a mesma instancia
+  NotaAplicacao
+\end{itemize}
+
+\begin{lstlisting}[language=sparql, frame=single, basicstyle=\scriptsize]
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where { 
+    ?c1 :temNotaAplicacao ?o.
+    ?c2 :temNotaAplicacao ?o.
+    FILTER (
+            ?c1 != ?c2
+    )
+}
+\end{lstlisting}
+
+\begin{itemize}
+\item
+  \begin{enumerate}
+  \def\labelenumi{(\arabic{enumi})}
+  \setcounter{enumi}{22}
+  \tightlist
+  \item
+    2 Classe\_N1 nao podem ter a mesma instancia NotaExclusao
+  \end{enumerate}
+\end{itemize}
+
+\begin{lstlisting}[language=sparql, frame=single, basicstyle=\scriptsize]
+Igual a cima
+\end{lstlisting}
+
+\begin{itemize}
+\item
+  \begin{enumerate}
+  \def\labelenumi{(\arabic{enumi})}
+  \setcounter{enumi}{22}
+  \tightlist
+  \item
+    2 Classe\_N1 nao podem ter a mesma instancia ExemploNotaAplicacao
+  \end{enumerate}
+\end{itemize}
+
+\begin{lstlisting}[language=sparql, frame=single, basicstyle=\scriptsize]
+Igual a cima
+\end{lstlisting}
+
+\hypertarget{classes-de-2-nivel}{%
+\subsubsection{Classes de 2º Nível}\label{classes-de-2uxba-nuxedvel}}
+
+\begin{itemize}
+\tightlist
+\item
+  \hypertarget{inv24-2}{\textbf{(inv24-2)}} 2 Classe\_N3 nao podem ter a mesma instancia
+  NotaAplicacao
+\end{itemize}
+
+\begin{lstlisting}[language=sparql, frame=single, basicstyle=\scriptsize]
+Igual a cima
+\end{lstlisting}
+
+\begin{itemize}
+\item
+  \begin{enumerate}
+  \def\labelenumi{(\arabic{enumi})}
+  \setcounter{enumi}{23}
+  \tightlist
+  \item
+    2 Classe\_N3 nao podem ter a mesma instancia NotaExclusao
+  \end{enumerate}
+\end{itemize}
+
+\begin{lstlisting}[language=sparql, frame=single, basicstyle=\scriptsize]
+Igual a cima
+\end{lstlisting}
+
+\begin{itemize}
+\item
+  \begin{enumerate}
+  \def\labelenumi{(\arabic{enumi})}
+  \setcounter{enumi}{23}
+  \tightlist
+  \item
+    Classe\_N3 nao podem ter a mesma instancia ExemploNotaAplicacao
+  \end{enumerate}
+\end{itemize}
+
+\begin{lstlisting}[language=sparql, frame=single, basicstyle=\scriptsize]
+Igual a cima
+\end{lstlisting}
+
+\hypertarget{classes-de-3-nivel-com-desdobramento}{%
+\subsubsection{Classes de 3º Nível com
+desdobramento.}\label{classes-de-3uxba-nuxedvel-com-desdobramento.}}
+
+\begin{itemize}
+\tightlist
+\item
+  Classes\_N3 com desdobramento:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \hypertarget{inv5}{\textbf{(inv5)}} Os 4ºs niveis herdam as legislações existentes no 3
+    nivel (subconjunto), quer para o PCA quer para o DF
+  \item
+    \hypertarget{inv6}{\textbf{(inv6)}} Só existe desdobramento caso o PCA ou DF sejam
+    distintos
+  \end{itemize}
+
+\begin{lstlisting}[language=sparql, frame=single, basicstyle=\scriptsize]
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where {
+    ?c rdf:type :Classe_N3 .
+    ?c :temFilho ?cf1 .
+    ?c :temFilho ?cf2 .
+
+    ?cf1 :temDF ?df1 .
+    ?cf2 :temDF ?df2 .
+    ?df1 :dfValor ?dfv1 .
+    ?df2 :dfValor ?dfv2 .
+
+    ?cf1 :temPCA ?pca1 .
+    ?cf2 :temPCA ?pca2 .
+    ?pca1 :pcaValor ?pcav1 .
+    ?pca2 :pcaValor ?pcav2 .
+
+    FILTER (
+      ?cf1 != ?cf2
+      && ?dfv1 = ?dfv2
+      && ?pcav1 = ?pcav2
+    )
+}
+\end{lstlisting}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    PCA distinto
+
+    \begin{itemize}
+    \tightlist
+    \item
+      deve ser possível diferenciar as relações de cada uma das
+      subdivisões ao 4º nível (por exemplo o critério de utilidade
+      administrativa em cada um dos 4ºs níveis reflete relações
+      suplementares com 3ºs níveis distintos; ou apenas uma subdivisão
+      de 4º nível tem critério legal) \textbf{Vão ter um criterio de
+      utilidade administrativa que referenciam classes nivel 3 distintas
+      entre eles}. (\textbf{PENDENTE})
+    \item
+      \hypertarget{inv7}{\textbf{(inv7)}} O DF é avaliado tendo em conta o contexto de 3º
+      nivel, em que:
+
+      \begin{itemize}
+      \tightlist
+      \item
+        Se for distinto tem que haver uma relação de sintese entre as
+        classes 4 filhas.
+      \item
+        Se for igual não interessa
+      \end{itemize}
+    \end{itemize}
+
+\begin{lstlisting}[language=sparql, frame=single, basicstyle=\scriptsize]
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where { 
+    ?c rdf:type :Classe_N3 .
+    ?c :temFilho ?cf1 .
+    ?c :temFilho ?cf2 .
+
+    ?cf1 :temPCA ?pca1 .
+    ?cf2 :temPCA ?pca2 .
+    ?pca1 :pcaValor ?pcav1 .
+    ?pca2 :pcaValor ?pcav2 .
+
+    ?cf1 :temDF ?df1 .
+    ?cf2 :temDF ?df2 .
+    ?df1 :dfValor ?dfv1 .
+    ?df2 :dfValor ?dfv2 .
+
+    FILTER (
+      ?cf1 != ?cf2
+      && ?pcav1 != ?pcav2
+      && ?dfv1 != ?dfv2
+      && NOT EXISTS { ?cf1 :eSinteseDe ?cf2 . }
+    )
+}
+\end{lstlisting}
+  \item
+    \hypertarget{inv8}{\textbf{(inv8)}} DF distinto
+
+    \begin{itemize}
+    \tightlist
+    \item
+      Deve haver uma relação de sintese (de ou por) entre as classes 4
+      filhasa
+    \item
+      O PCA é igual
+    \end{itemize}
+
+\begin{lstlisting}[language=sparql, frame=single, basicstyle=\scriptsize]
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where { 
+?c rdf:type :Classe_N3 .
+?c :temFilho ?cf1 .
+?c :temFilho ?cf2 .
+
+?cf1 :temPCA ?pca1 .
+?cf2 :temPCA ?pca2 .
+?pca1 :pcaValor ?pcav1 .
+?pca2 :pcaValor ?pcav2 .
+
+?cf1 :temDF ?df1 .
+?cf2 :temDF ?df2 .
+?df1 :dfValor ?dfv1 .
+?df2 :dfValor ?dfv2 .
+
+
+FILTER (
+  ?cf1 != ?cf2
+  && ?dfv1 != ?dfv2
+  && (
+  NOT EXISTS { ?cf1 :eSinteseDe ?cf2 . }
+  || ?pcav1 != ?pcav2)
+)
+}
+\end{lstlisting}
+  \item
+    \hypertarget{inv9}{\textbf{(inv9)}} Os termos de indice vao para os 4ºs niveis
+    (repetidos)
+  \end{itemize}
+
+\begin{lstlisting}[language=sparql, frame=single, basicstyle=\scriptsize]
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where { 
+    ?c rdf:type :Classe_N3 .
+    ?c :temFilho ?cf .
+    ?c :temTI ?ti .
+
+    FILTER (
+        NOT EXISTS { ?cf :temTI ?ti . }
+    )
+}
+\end{lstlisting}
+\item
+  \hypertarget{inv3}{\textbf{(inv3)}} As relações \texttt{temDF} e \texttt{temPCA}, não
+  existem numa classe 3 se esta tiver filhos.
+\end{itemize}
+
+\begin{lstlisting}[language=sparql, frame=single, basicstyle=\scriptsize]
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where {
+   ?c rdf:type :Classe_N3 .
+   ?c :temFilho ?cf .
+
+    FILTER (
+        EXISTS { ?c :temDF ?df . } ||
+        EXISTS { ?c :temPCA ?pca . }
+    )
+}
+\end{lstlisting}
+
+\begin{itemize}
+\tightlist
+\item
+  \hypertarget{inv4}{\textbf{(inv4)}} As relações \texttt{temDF} e \texttt{temPCA}, existem
+  numa classe 3 se esta \textbf{não} tiver filhos.
+\end{itemize}
+
+\begin{lstlisting}[language=sparql, frame=single, basicstyle=\scriptsize]
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where {
+   ?c rdf:type :Classe_N3 .
+   
+   FILTER (
+      NOT EXISTS { ?c :temFilho ?cf . } &&
+      (NOT EXISTS { ?c :temDF ?df . } ||
+      NOT EXISTS { ?c :temPCA ?pca . })
+   )
+}
+\end{lstlisting}
+
+\begin{itemize}
+\tightlist
+\item
+  Um PN tem sempre um PCA e um DF. O valor do PCA poderá ser nulo se o
+  PCA tiver uma nota associada.
+\item
+  \hypertarget{inv10}{\textbf{(inv10)}} Se um PN (Classe 3) for \textbf{complementar} de
+  outro que se desdobra ao 4º nível, é necessário, com base no critério
+  de complementaridade informacional, a relação manter-se ao 3º nível.
+  Pelo menos um dos 4ºs níveis deve ser de \textbf{conservação}.
+\end{itemize}
+
+\begin{lstlisting}[language=sparql, frame=single, basicstyle=\scriptsize]
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where {
+    ?c1 rdf:type :Classe_N3 .
+    ?c2 rdf:type :Classe_N3 .
+
+    ?c1 :eComplementarDe ?c2 .
+    ?c2 :temFilho ?c2f .
+
+    ?c2f :temDF ?df .
+    ?df :dfValor ?dfv .
+
+    FILTER (
+      ?c1 != ?c2
+      && ?dfv != "C"
+    )
+}
+\end{lstlisting}
+
+\begin{itemize}
+\tightlist
+\item
+  \hypertarget{inv11}{\textbf{(inv11)}} Um processo só tem participantes se for
+  \textbf{transversal} (Se o campo `transversal' tiver o valor sim).
+\end{itemize}
+
+\begin{lstlisting}[language=sparql, frame=single, basicstyle=\scriptsize]
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where {
+    ?c rdf:type :Classe_N3 .
+    ?c :processoTransversal "N" .
+    
+    FILTER (
+        EXISTS { ?c :temParticipanteComunicador ?ca . }
+        ||
+        EXISTS { ?c :temParticipanteIniciador ?ca . }
+        ||
+        EXISTS { ?c :temParticipanteApreciador ?ca . }
+        ||
+        EXISTS { ?c :temParticipanteDecisor ?ca . }
+        ||
+        EXISTS { ?c :temParticipanteAssessor ?ca . }
+        ||
+        EXISTS { ?c :temParticipanteExecutor ?ca . }
+    )
+}
+\end{lstlisting}
+
+\begin{itemize}
+\item
+  Uma classe N3 tem de ter sempre pelo menos um dono.
+\item
+  \hypertarget{inv24-3}{\textbf{(inv24-3)}} 2 Classe\_N3 nao podem ter a mesma instancia
+  NotaAplicacao
+\item
+  \begin{enumerate}
+  \def\labelenumi{(\arabic{enumi})}
+  \setcounter{enumi}{24}
+  \tightlist
+  \item
+    2 Classe\_N3 nao podem ter a mesma instancia NotaExclusao
+  \end{enumerate}
+\item
+  \begin{enumerate}
+  \def\labelenumi{(\arabic{enumi})}
+  \setcounter{enumi}{24}
+  \tightlist
+  \item
+    2 Classe\_N3 nao podem ter a mesma instancia ExemploNotaAplicacao
+  \end{enumerate}
+\item
+  \hypertarget{inv25}{\textbf{(inv25)}} 2 Classe\_N3 nao podem ter os mesmos filhos
+\item
+  \hypertarget{inv26}{\textbf{(inv26)}} 2 Classe\_N3 nao podem ter o mesmo TI
+\end{itemize}
+
+\hypertarget{invariantes-sobre-os-pns-classe-3}{%
+\subsubsection{Invariantes sobre os PNs (Classe
+3)}\label{invariantes-sobre-os-pns-classe-3}}
+
+\begin{itemize}
+\tightlist
+\item
+  \hypertarget{inv12}{\textbf{(inv12)}} As relações \texttt{eComplementarDe} e
+  \texttt{eCruzadoCom} são simétricas.
+\end{itemize}
+
+\begin{lstlisting}[language=sparql, frame=single, basicstyle=\scriptsize]
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where {
+    ?c1 :eComplementarDe ?c2 .
+    ?c3 :eCruzadoCom ?c4 .
+
+    FILTER (
+        ?c1 != ?c2 
+        && ?c3 != ?c4
+        && NOT EXISTS { ?c2 :eComplementarDe ?c2 . }
+        && NOT EXISTS { ?c4 :eCruzadoCom ?c3 . }
+    )
+}
+\end{lstlisting}
+
+\begin{itemize}
+\tightlist
+\item
+  \hypertarget{inv14}{\textbf{(inv14)}} As relações \texttt{eSinteseDe}, \texttt{eSucessorDe}
+  e \texttt{eSuplementoDe} são antisimétricas.
+  (\textbf{\texttt{eSuplementoDe} ou \texttt{eSuplementoPara} ?? As
+  duas})
+\end{itemize}
+
+\begin{lstlisting}[language=sparql, frame=single, basicstyle=\scriptsize]
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where {
+    ?c1 :eSinteseDe ?c2 .
+    ?c2 :eSinteseDe ?c1 .
+
+    ?c3 :eSintetizadoPor ?c4 .
+    ?c4 :eSintetizadoPor ?c3 .
+
+    ?c5 :eSucessorDe ?c6.
+    ?c6 :eSucessorDe ?c5.
+
+    ?c7 :eSuplementoDe ?c8.
+    ?c8 :eSuplementoDe ?c7.
+
+    ?c9 :eSuplementoPara ?c10.
+    ?c10 :eSuplementoDe ?c9.
+
+    FILTER (
+        ?c1 != ?c2
+        && ?c3 != ?c4
+        && ?c5 != ?c6
+        && ?c7 != ?c8
+        && ?c9 != ?c10
+    )
+
+}
+\end{lstlisting}
+
+\begin{itemize}
+\tightlist
+\item
+  \hypertarget{inv13}{\textbf{(inv13)}} Na relação temRelProc um PN não se relaciona com ele
+  próprio.
+\end{itemize}
+
+\begin{lstlisting}[language=sparql, frame=single, basicstyle=\scriptsize]
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where {
+    ?c1 rdf:type :Classe_N3 .
+    ?c2 rdf:type :Classe_N4.
+
+    FILTER (
+      EXISTS { ?c1 :eAntecessorDe ?c1 . }
+      ||
+      EXISTS { ?c1 :eComplementarDe ?c1 . }
+      ||
+      EXISTS { ?c1 :eCruzadoCom ?c1 . }
+      ||
+      EXISTS { ?c1 :eSinteseDe ?c1 . }
+      ||
+      EXISTS { ?c1 :eSintetizadoPor ?c1 . }
+      ||
+      EXISTS { ?c2 :eSinteseDe ?c2 . }
+      ||
+      EXISTS { ?c2 :eSintetizadoPor ?c2 . }
+      ||
+      EXISTS { ?c1 :eSucessorDe ?c1 . }
+      ||
+      EXISTS { ?c1 :eSuplementoDe ?c1 . }
+      ||
+      EXISTS { ?c1 :eSuplementoPara ?c1 . }
+    )
+
+}
+\end{lstlisting}
+
+\begin{itemize}
+\tightlist
+\item
+  \hypertarget{inv15}{\textbf{(inv15)}} Um PN só pode ter uma relação com outro PN
+  (\textbf{Uma relação como assim? R: Um PN não pode ter relações
+  distintas com o mesmo processo \textbar{} Que relações? As do tipo
+  Classe\_N4 -\textgreater{} Classe\_N3})
+\end{itemize}
+
+\begin{lstlisting}[language=sparql, frame=single, basicstyle=\scriptsize]
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where { 
+  ?c1 rdf:type :Classe_N3 .
+  ?c2 rdf:type :Classe_N3 .
+  ?c1 :eAntecessorDe ?c2 .
+
+  FILTER (
+    ?c1 != ?c2
+    &&
+    (
+    EXISTS { ?c1 :eComplementarDe ?c2 . }
+    ||
+    EXISTS { ?c1 :eCruzadoCom ?c2 . }
+    ||
+    EXISTS { ?c1 :eSinteseDe ?c2 . }
+    ||
+    EXISTS { ?c1 :eSintetizadoPor ?c2 . }
+    ||
+    EXISTS { ?c1 :eSucessorDe ?c2 . }
+    ||
+    EXISTS { ?c1 :eSuplementoDe ?c2 . }
+    ||
+    EXISTS { ?c1 :eSuplementoPara ?c2 . }
+    )
+  )
+
+}
+\end{lstlisting}
+
+\begin{itemize}
+\tightlist
+\item
+  \hypertarget{inv16}{\textbf{(inv16)}} Se um PN se desdobra em 4ºs niveis os Termos de
+  Indice passam para os filhos.
+\end{itemize}
+
+\begin{lstlisting}[language=sparql, frame=single, basicstyle=\scriptsize]
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where { 
+    ?c rdf:type :Classe_N3 .
+    ?c :temFilho ?cf .
+
+
+    FILTER (
+        EXISTS { ?c :temTI ?ti .}
+    )
+}
+\end{lstlisting}
+
+\begin{itemize}
+\tightlist
+\item
+  \hypertarget{inv17}{\textbf{(inv17)}} Os termos de indice de um PN não existem em mais
+  nenhuma classe 3
+\end{itemize}
+
+\begin{lstlisting}[language=sparql, frame=single, basicstyle=\scriptsize]
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where { 
+    ?c1 rdf:type :Classe_N3 .
+    ?c2 rdf:type :Classe_N3 .
+
+    ?c1 :temTI ?ti .
+
+    FILTER (
+      ?c1 != ?c2
+      && EXISTS { ?c2 :temTI ?ti . }
+    )
+}
+\end{lstlisting}
+
+\begin{itemize}
+\tightlist
+\item
+  \hypertarget{inv20}{\textbf{(inv20)}} Dois PNs não podem ter a mesma instancia de DF.
+\item
+  \hypertarget{inv21}{\textbf{(inv21)}} Dois PNs não podem ter a mesma instancia de PCA.
+\end{itemize}
+
+\hypertarget{invariantes-sobre-a-relacaoo-suplementar-implicacoes-no-pca}{%
+\subsubsection{Invariantes sobre a relação Suplementar: implicações no
+PCA}\label{invariantes-sobre-a-relauxe7uxe3o-suplementar-implicauxe7uxf5es-no-pca}}
+
+\begin{itemize}
+\tightlist
+\item
+  \hypertarget{inv29}{\textbf{(inv29)}} Quando o PN (sem filhos) em causa
+  \texttt{eSuplementoPara} outro, deve ser acrescentado um critério de
+  utilidade administrativa na justificação do respetivo PCA;
+  (\textbf{\texttt{eSuplementoDe} ou \texttt{eSuplementoPara} ?
+  SuplementoPara \textbar{} Que PCA, o do PN em causa ou o outro? Em
+  causa \textbar{} Não existe nenhuma relação do tipo
+  \texttt{Justificacao\ -\textgreater{}\ CriterioJustificacao} R:
+  temCriterio })
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Nesse critério, critério de utilidade administrativa, devem aparecer
+    todos os processos com os quais existe uma relação
+    \texttt{eSuplementoPara}; (\textbf{Que todos os processos?? Todas as
+    que o PN em CAUSA está relacionado por a relação
+    \texttt{eSuplementoPara}})
+  \end{itemize}
+\item
+  \hypertarget{inv33}{\textbf{(inv33)}} Quando o PN (com filhos) em causa
+  \texttt{eSuplementoPara} outro, deve ser acrescentado um critério de
+  utilidade administrativa na justificação PCA dos filhos em que os
+  processos relacionados com o critério podem ser distintos.
+\end{itemize}
+
+\hypertarget{invariantes-sobre-a-relacao-sintese-implicacoes-no-df}{%
+\subsubsection{Invariantes sobre a relação Síntese: implicações no
+DF}\label{invariantes-sobre-a-relauxe7uxe3o-suxedntese-implicauxe7uxf5es-no-df}}
+
+\begin{itemize}
+\tightlist
+\item
+  Quando o PN em causa é síntese de outro, o DF deve ter o valor de
+  ``Conservação'';
+\item
+  Quando o PN em causa é síntetizado por outro, o DF deve ter o valor de
+  ``Eliminação'';
+\item
+  \hypertarget{inv34}{\textbf{(inv34)}} Todos os processos relacionados (sem filhos) por uma
+  relação de síntese deverão estar relacionados com o critério de
+  densidade informacional da respetiva justificação.
+  (\texttt{critTemProcRel} \textbf{O criterio é que se relaciona com os
+  processos})
+\item
+  \hypertarget{inv35}{\textbf{(inv35)}} Todos os processos relacionados (com filhos) por uma
+  relação de síntese, os filhos deverão estar relacionados com o
+  critério de densidade informacional da respetiva justificação.
+  (\texttt{critTemProcRel} \textbf{O criterio é que se relaciona com os
+  processos})
+\end{itemize}
+
+\hypertarget{invariantes-sobre-a-relacao-complementar-implicacoes-no-df}{%
+\subsubsection{Invariantes sobre a relação Complementar: implicações no
+DF}\label{invariantes-sobre-a-relauxe7uxe3o-complementar-implicauxe7uxf5es-no-df}}
+
+\begin{itemize}
+\tightlist
+\item
+  Uma relação de complementaridade implica a conservação dos PNs que
+  mantêm essa relação; (\textbf{implica que o DF seja de conservação?
+  Nos dois processos? Sim e sim})
+\item
+  \hypertarget{inv36}{\textbf{(inv36)}} Todos os processos relacionados (sem filhos) pela
+  relação \texttt{eComplementarDe}, devem estar relacionados com o
+  critério de complementaridade informacional da respetiva justificação.
+\item
+  \hypertarget{inv37}{\textbf{(inv37)}}Todos os processos relacionados (com filhos) pela
+  relação \texttt{eComplementarDe}, os filhos devem estar relacionados
+  com o critério de complementaridade informacional da respetiva
+  justificação.
+\end{itemize}
+
+\hypertarget{invariantes-sobre-o-df}{%
+\subsubsection{Invariantes sobre o DF}\label{invariantes-sobre-o-df}}
+
+\begin{itemize}
+\tightlist
+\item
+  \hypertarget{inv30}{\textbf{(inv30)}} Um DF, na sua justificação, deverá conter apenas
+  critérios de densidade informacional, complementaridade informacional
+  e legal
+\item
+  \hypertarget{inv18}{\textbf{(inv18)}} 2 DFs nao podem ter a mesma instancia de
+  Justificacao;
+\item
+  \hypertarget{inv27}{\textbf{(inv27)}} Um DF, na sua justificação, apenas deve ter uma
+  instancia de JustificacaoDF;
+\end{itemize}
+
+\hypertarget{invariantes-sobre-o-pca}{%
+\subsubsection{Invariantes sobre o PCA}\label{invariantes-sobre-o-pca}}
+
+\begin{itemize}
+\tightlist
+\item
+  \hypertarget{inv31}{\textbf{(inv31)}} Um PCA, na sua justificação, deverá conter apenas
+  critérios gestionários, utilidade administrativa e legal
+\item
+  \hypertarget{inv19}{\textbf{(inv19)}} 2 PCAs nao podem ter a mesma instancia de
+  Justificacao;
+\item
+  \hypertarget{inv28}{\textbf{(inv28)}} Um PCA, na sua justificação, apenas deve ter uma
+  instancia de JustificacaoPCA;
+\end{itemize}
+
+\hypertarget{invariantes-sobre-os-termos-de-indice}{%
+\subsubsection{Invariantes sobre os Termos de
+Índice}\label{invariantes-sobre-os-termos-de-uxedndice}}
+
+\begin{itemize}
+\tightlist
+\item
+  Os termos de índice são únicos no universo do sistema
+\end{itemize}
+
+\hypertarget{invariantes-das-relacoes-temrelproc}{%
+\subsubsection{\texorpdfstring{Invariantes das relações
+\texttt{temRelProc}}{Invariantes das relações temRelProc}}\label{invariantes-das-relauxe7uxf5es-temrelproc}}
+
+Só se aplica ao 3º nivel.
+
+\begin{itemize}
+\tightlist
+\item
+  \hypertarget{inv32}{\textbf{(inv32)}} Se um PN é (por ordem de prioridade):
+
+  \begin{itemize}
+  \tightlist
+  \item
+    eComplementarDe -\textgreater{} DF é de conservaçao
+  \item
+    eSinteseDe -\textgreater{} DF é de conservação
+  \item
+    eSintetizadoPor -\textgreater{} DF é de eliminação
+  \item
+    nenhuma das acima -\textgreater{} DF é NE (Não especificado)
+  \end{itemize}
+\end{itemize}
+
+\begin{lstlisting}[language=sparql, frame=single, basicstyle=\scriptsize]
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where {
+    ?c rdf:type :Classe_N3 .
+    ?c :eComplementarDe ?o .
+    ?c :temDF ?df.
+    ?df :dfValor ?dfv.
+    
+    minus {
+            ?c :temFilho ?f .
+        }
+
+    FILTER (?dfv != "C")
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=sparql, frame=single, basicstyle=\scriptsize]
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where {
+    ?c rdf:type :Classe_N3 .
+    ?c :eSinteseDe ?ca .
+    ?c :temDF ?df.
+    ?df :dfValor ?dfv.
+    
+    minus {
+            ?c :temFilho ?cf .
+        ?c :eComplementarDe ?cb .
+    }
+
+    FILTER (?dfv != "C")
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=sparql, frame=single, basicstyle=\scriptsize]
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where {
+    ?c rdf:type :Classe_N3 .
+    ?c :eSintetizadoPor ?ca .
+    ?c :temDF ?df.
+    ?df :dfValor ?dfv.
+
+    minus {
+            ?c :temFilho ?f .
+        ?c :eComplementarDe ?cb .
+        ?c :eSinteseDe ?cc .
+    }
+
+    FILTER (?dfv != "E")
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=sparql, frame=single, basicstyle=\scriptsize]
+PREFIX : <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX clav: <http://jcr.di.uminho.pt/m51-clav#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+select * where {
+    ?c rdf:type :Classe_N3 .
+    ?c :temDF ?df.
+    ?df :dfValor ?dfv.
+    minus {
+            ?c :temFilho ?cf .
+        ?c :eComplementarDe ?ca .
+        ?c :eSintetizadoPor ?cb .
+        ?c :eSinteseDe ?cc .
+    }
+    
+    FILTER (?dfv != "NE")
+}
+\end{lstlisting}
+
+\hypertarget{invariantes-sobre-as-justificacoes}{%
+\subsubsection{Invariantes sobre as
+Justificações}\label{invariantes-sobre-as-justificauxe7uxf5es}}
+
+\begin{itemize}
+\tightlist
+\item
+  \hypertarget{inv23}{\textbf{(inv23)}} 2 Justificações nao podem ter a mesma instancia de
+  CriterioJustificacao
+\item
+  \hypertarget{inv22}{\textbf{(inv22)}} Cada Justificacao tem no maximo 3
+  CriterioJustificacao diferentes
+\item
+  \hypertarget{inv38}{\textbf{(inv38)}} Cada Justificacao tem no maximo 1 Criterio de cada
+  tipo
+\end{itemize}
+
 
 \section{Modelo formal Alloy}
 
