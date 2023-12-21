@@ -65,7 +65,7 @@ Mestrado Integrado em Engenharia Informática - Laboratório em Engenharia Infor
 
 É uma estrutura **hierárquica de classes** criada para a classificação dos processos de negócio (PN's) da AP, **constituída por 4 nivéis**.
 
-### Nivéis
+### Níveis
 
 Todas as classes e processos são constituidos pelos seguintes atributos:
 - Código;
